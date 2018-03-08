@@ -27,7 +27,6 @@
         </div>
         <div class="right block-shadow">
           <h2 class="dot-line-title">社区动态</h2>
-
           <div class="block">
             <h3 class="dot-line-title2">最新书讯</h3>
           </div>
@@ -126,6 +125,8 @@ export default {
       let _this = this;
       window.onresize = function() {
         let body_width = document.body.clientWidth;
+
+        body_width > 400 ? (this.device = 0) : (this.device = 1);
 
         _this.body_width = body_width;
       };

@@ -49,9 +49,9 @@ export default {
       this.light = this.carouselData[newCurrent].light;
     },
     bodyWidth(newWidth) {
-      newWidth > 1263
-        ? (this.carousel_height = 350)
-        : (this.carousel_height = Math.ceil(newWidth / 1263 * 350));
+      newWidth > 730
+        ? (this.carousel_height = 336)
+        : (this.carousel_height = Math.ceil(newWidth / 730 * 336));
     }
   },
   mounted() {
@@ -123,7 +123,6 @@ export default {
       transition: opacity 1s ease-in;
       .item_img {
         width: 100%;
-        // height: 300px;
         max-width: 1263px;
         opacity: 0;
         transition: opacity 1s ease-in;

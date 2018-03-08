@@ -37,12 +37,8 @@ export default {
   },
   watch: {
     bodyWidth(val){
-      val > 768 ? (_this.searchState = 1) : (_this.searchState = 2);
+      val > 768 ? (this.searchState = 1) : (this.searchState = 2);
     }
-  },
-  mounted() {
-  },
-  methods: {
   }
 };
 </script>
