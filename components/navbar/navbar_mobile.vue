@@ -2,7 +2,7 @@
   <div class="navbar">
     <Row>
       <i-col span="6">
-        <Icon type="ios-book-outline"></Icon>
+        <Icon type="ios-paper-outline"></Icon>
         <span class="nav-content">资讯</span>
       </i-col>
       <i-col span="6">
