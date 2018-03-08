@@ -1,8 +1,8 @@
 <template>
-  <div id="ice_carousel" @mouseover="carousel_over" @mouseout="carousel_out">
+  <div id="ice_carousel" @mouseover="carousel_over" @mouseout="carousel_out" :style="{ height: carousel_height + 'px' }">
       <div class="carousel_list">
         <div class="carousel_item" :class="{ active: index === current }" v-for="(item, index) in carouselData" v-bind:key="item.id" :style="{ background: item.back_color }">
-          <!-- <img :src="item.url" :class="{ img_active: index === current }" class="item_img"> -->
+          <img :src="item.url" :class="{ img_active: index === current }" class="item_img">
         </div>
         <ol class="dot_wrapper">
           <li class="dot_box" :class="{ box_active: index === current }" v-for="(item, index) in carouselData"  v-bind:key="item.id" @click="dot_updata_current(index)">
@@ -25,24 +25,38 @@ export default {
     //轮播图的数据
     carouselData: {
       type: Array,
-      default: function(){}
+      default: function() {}
     },
     duration: {
       type: Number,
       default: 3000
+    },
+    bodyWidth: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       current: 0,
       prevOrNext_state: false,
-      light: 1
+      light: 1,
+      carousel_height: 0          //走马灯的height
     };
   },
   watch: {
     current(newCurrent) {
       this.light = this.carouselData[newCurrent].light;
+    },
+    bodyWidth(newWidth) {
+      newWidth > 1263
+        ? (this.carousel_height = 350)
+        : (this.carousel_height = Math.ceil(newWidth / 1263 * 350));
     }
+  },
+  mounted() {
+    this.light = this.carouselData[0].light;
+    this.carouse_init();
   },
   methods: {
     carouse_init() {
@@ -85,12 +99,6 @@ export default {
       this.timer_init();
       this.prevOrNext_state = false;
     }
-  },
-  mounted() {
-    this.light = this.carouselData[0].light;
-    console.log(this.light);
-
-    this.carouse_init();
   }
 };
 </script>
@@ -98,12 +106,11 @@ export default {
 <style lang='scss' scoped='' type='text/css'>
 #ice_carousel {
   width: 100%;
-  height: 100%;
-  // min-width: 1000px;
+  height: 300px;
   cursor: pointer;
   .carousel_list {
     width: 100%;
-    height: 300px;
+    height: 100%;
     position: relative;
     .carousel_item {
       width: 100%;
@@ -113,13 +120,13 @@ export default {
       top: 0;
       left: 0;
       opacity: 0;
-      // transition: opacity 1s ease-in;
+      transition: opacity 1s ease-in;
       .item_img {
         width: 100%;
-        height: 300px;
+        // height: 300px;
         max-width: 1263px;
         opacity: 0;
-        // transition: opacity 1s ease-in;
+        transition: opacity 1s ease-in;
       }
       .img_active {
         opacity: 1;

@@ -1,6 +1,57 @@
 @import "../../node_modules/iview/dist/styles/iview.css";
+body {
+    font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+    color: #8d8d8d;
+}
 
-body{color: #000; $mainC: #009a61; $deepC: #027148; $shallowC:#02BB76; }
-a{color: #8d8d8d;}
-a:hover, a:visited{color: #6a6a6a;}
+:root {
+    --mainC: #009a61;
+    --deepC: #027148;
+    --shallowC: #02BB76;
+}
 
+a {
+    color: #8d8d8d;
+}
+
+a:hover,
+a:visited {
+    color: #6a6a6a;
+}
+
+.strong {
+    font-weight: bold;
+}
+
+.block-shadow {
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.dot-line-title {
+    line-height: 1;
+    position: relative;
+    border-left: 4px solid #009a61;
+    padding-left: 8px
+}
+
+.dot-line-title:after {
+    content: '';
+    position: absolute;
+    transform: translate(0, 50%);
+    top: calc(50% - 2px);
+    right: 0;
+    width: calc(96% - 90px);
+    height: 2px;
+    background-image: url(../images/title-line.png);
+    background-size: 3px 2px;
+    background-repeat: repeat;
+}
+
+.dot-line-title2 {
+	line-height: 1;
+	position: relative;
+	border-left: 3px solid #009a61;
+	padding-left: 8px
+}

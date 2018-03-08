@@ -1,21 +1,21 @@
 <template>
   <div class="navbar">
     <Row>
-      <i-col span="6">
+      <!-- <i-col span="6">
         <Icon type="ios-paper-outline"></Icon>
         <span class="nav-content">资讯</span>
-      </i-col>
-      <i-col span="6">
+      </i-col> -->
+      <i-col span="8">
         <Icon type="ios-book-outline"></Icon>
         <span class="nav-content">图书</span>
       </i-col>
-      <i-col span="6">
+      <i-col span="8">
         <Icon type="document-text"></Icon>
         <span class="nav-content">文章</span>
       </i-col>
-      <i-col span="6">
+      <i-col span="8">
         <Icon type="navicon-round"></Icon>
-        <span class="nav-content">更多</span>  
+        <span class="nav-content">信息</span>  
       </i-col>       
     </Row>
   </div>
@@ -34,9 +34,7 @@ export default {
   .navbar{
     width: 100%;
     height: 50px;
-    $mainC: #009a61;
-    $deepC: #027148;
-    $shallowC:#02BB76;
+    background-color: #fff;
     .ivu-row{
       border-top: 1px solid #eee;
       .ivu-col{
@@ -50,7 +48,7 @@ export default {
         }
       }
       .ivu-col:hover{
-        color: $shallowC;
+        color: #02BB76;
       }
     }
   }
