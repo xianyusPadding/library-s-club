@@ -36,7 +36,7 @@ export default {
     };
   },
   watch: {
-    bodyWidth(val){
+    bodyWidth(val) {
       val > 768 ? (this.searchState = 1) : (this.searchState = 2);
     }
   }
@@ -44,48 +44,49 @@ export default {
 </script>
 
 <style lang='scss' scoped='' type='text/css'>
-.navbar {
-  width: 100%;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-  .container {
-    max-width: 1263px;
-    line-height: 56px;
-    margin: 0 auto;
-    display: flex;
-    .logo {
-      flex: 0 0 140px;
-      margin-right: 40px;
-    }
-    .navbar-row {
-      flex: 1;
-      .book_link,
-      .article_link {
-        width: 60px;
-        text-align: center;
-        display: inline-block;
-        font-size: 16px;
+  @import "../../assets/css/color.scss";
+  .navbar {
+    width: 100%;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    .container {
+      max-width: 1263px;
+      line-height: 56px;
+      margin: 0 auto;
+      display: flex;
+      .logo {
+        flex: 0 0 140px;
+        margin-right: 40px;
       }
-      .book_link {
-        margin-right: 20px;
-      }
-      .nav-middle {
-        text-align: right;
-        .ivu-icon {
-          font-size: 20px;
-          cursor: pointer;
+      .navbar-row {
+        flex: 1;
+        .book_link,
+        .article_link {
+          width: 60px;
+          text-align: center;
+          display: inline-block;
+          font-size: 16px;
         }
-      }
-      .nav-right {
-        text-align: right;
-        .ivu-icon {
-          position: relative;
-          top: 3px;
-          font-size: 20px;
-          color: #009a61;
-          cursor: pointer;
+        .book_link {
+          margin-right: 20px;
+        }
+        .nav-middle {
+          text-align: right;
+          .ivu-icon {
+            font-size: 20px;
+            cursor: pointer;
+          }
+        }
+        .nav-right {
+          text-align: right;
+          .ivu-icon {
+            position: relative;
+            top: 3px;
+            font-size: 20px;
+            color: $mainC;
+            cursor: pointer;
+          }
         }
       }
     }
   }
-}
 </style>

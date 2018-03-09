@@ -1,21 +1,21 @@
 <template>
   <div class="navbar">
     <Row>
-      <!-- <i-col span="6">
+      <i-col class="nav-item" span="6">
         <Icon type="ios-paper-outline"></Icon>
-        <span class="nav-content">资讯</span>
-      </i-col> -->
-      <i-col span="8">
+        <span class="nav-content">推荐</span>
+      </i-col>
+      <i-col class="nav-item" span="6">
         <Icon type="ios-book-outline"></Icon>
         <span class="nav-content">图书</span>
       </i-col>
-      <i-col span="8">
+      <i-col class="nav-item" span="6">
         <Icon type="document-text"></Icon>
         <span class="nav-content">文章</span>
       </i-col>
-      <i-col span="8">
+      <i-col class="nav-item" span="6">
         <Icon type="navicon-round"></Icon>
-        <span class="nav-content">信息</span>  
+        <span class="nav-content">消息</span>  
       </i-col>       
     </Row>
   </div>
@@ -30,6 +30,7 @@ export default {
 </script>
 
 <style lang='scss' scoped='' type='text/css'>
+  @import "../../assets/css/color.scss";
   
   .navbar{
     width: 100%;
@@ -43,12 +44,13 @@ export default {
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        cursor: pointer;
         .ivu-icon{
           font-size: 20px;
         }
       }
       .ivu-col:hover{
-        color: #02BB76;
+        color: $shallowC;
       }
     }
   }

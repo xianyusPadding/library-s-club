@@ -16,6 +16,7 @@
 </script>
 
 <style lang='scss' scoped='' type='text/css'>
+  @import "../../assets/css/color.scss";
   .header-mobile{
     width: 100%;
     height: 50px;
@@ -25,7 +26,7 @@
       flex: 0 0 40px;
       display: inline-flex;
       justify-content: center;
-      color: #009a61;
+      color: $mainC;
       font-size: 18px;
     }
     .search{
