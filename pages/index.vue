@@ -55,7 +55,7 @@ import lCarousel from "~/components/lCarousel/lCarousel.vue";
 export default {
   data() {
     return {
-      device: 2,              //获取设备信息：pc：0、mobile：1
+      device: 2, //获取设备信息：pc：0、mobile：1
       carouselData: [
         //走马灯banner的数据
         {
@@ -79,7 +79,8 @@ export default {
       ],
       duration: 4000,
       body_width: 0,
-      hot_books: [            //热门图书
+      hot_books: [
+        //热门图书
         {
           id: 0
         },
@@ -103,8 +104,8 @@ export default {
         },
         {
           id: 7
-        },
-      ],
+        }
+      ]
     };
   },
   mounted() {
@@ -116,9 +117,12 @@ export default {
     device_init() {
       let body_width = document.body.clientWidth;
 
-      body_width > 400 ? (this.device = 0) : (this.device = 1);
-
       this.body_width = body_width;
+      if (/Android|webOS|iPhone|iPad|BlackBerry/i.test(navigator.userAgent)) {
+        this.device = 1
+      } else {
+        this.device = 0
+      }
     },
     //监测窗口大小变化
     win_resize() {
@@ -160,12 +164,12 @@ export default {
       }
       .hot-book {
         margin-bottom: 14px;
-        .block-books{
+        .block-books {
           width: 100%;
-          .block-book{
+          .block-book {
             padding: 20px 0;
             text-align: center;
-            .book-img{
+            .book-img {
               width: 133px;
               height: 175px;
               display: inline-block;
