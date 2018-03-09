@@ -36,8 +36,18 @@
         </div>
         <div class="right block-shadow">
           <h2 class="dot-line-title">社区动态</h2>
-          <div class="block">
+          <div class="block new-mess-block">
             <h3 class="dot-line-title2">最新书讯</h3>
+            <ul class="warpper">
+              <li class="item">
+                <h4 class="title">一月书讯</h4>
+                <p class="content">13本好书与你一起开工</p>
+              </li>
+              <li class="item">
+                <h4 class="title">二月书讯</h4>
+                <p class="content">13本好书与你一起开工</p>
+              </li>
+            </ul>
           </div>
           <div class="block">
             <h3 class="dot-line-title2">广告</h3>
@@ -251,6 +261,15 @@ export default {
         width: 100%;
         min-height: 50px;
         margin-top: 14px;
+      }
+      .new-mess-block .warpper{
+        width: 100%;
+        .item{
+          line-height: 1.2;
+          .title, .content{
+            display: inline-block;
+          }
+        }
       }
     }
   }
