@@ -4,6 +4,10 @@ body {
     color: #8d8d8d;
 }
 
+li{
+  list-style: none;
+}
+
 a {
     color: #8d8d8d;
 }
@@ -48,4 +52,10 @@ a:visited {
 	position: relative;
 	border-left: 3px solid #009a61;
 	padding-left: 8px
+}
+
+.text-over{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }

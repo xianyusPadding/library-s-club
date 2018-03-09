@@ -5,7 +5,7 @@
       <div class="article-center">
         <h3 class="title">{{item.title}}</h3>
         <div>
-          <p class="content">{{item.content}}</p>
+          <p class="content text-over">{{item.content}}</p>
           <span class="author">{{item.author}}</span>
           <span class="time">发表于{{item.time}}</span>
         </div>
