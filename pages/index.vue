@@ -9,7 +9,7 @@
     <!-- 走马灯 -->
     <l-carousel :carousel-data="carouselData" :duration="duration" :body-width="body_width"></l-carousel>
 
-    <div class="content">
+    <div class="container">
       <div class="row">
         <div class="left">
           <div class="hot-book block-shadow">
@@ -208,7 +208,7 @@ export default {
 #index {
   $mainC: #009a61;
   $deepC: #027148;
-  .content {
+  .container {
     width: 100%;
     max-width: 1263px;
     margin: 14px auto;
