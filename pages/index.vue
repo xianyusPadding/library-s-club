@@ -1,7 +1,7 @@
 <template>
   <div id="index">
     <!-- pc的navbar -->
-    <navbar-pc v-if="device === 0" :body-width="body_width"></navbar-pc>
+    <navbar-pc v-if="device === 0" :nav-index="nav_index" @updataNavIndex="updata_nav_index" :body-width="body_width"></navbar-pc>
 
     <!-- mobile端的header -->
     <header-mobile v-if="device === 1"></header-mobile>
@@ -60,7 +60,7 @@
     </div>
 
     <!-- mobile端的navbar -->
-    <navbar-moblie class="fixed-footer" v-if="device === 1"></navbar-moblie>
+    <navbar-moblie class="fixed-footer" :nav-index="nav_index" @updataNavIndex="updata_nav_index" v-if="device === 1"></navbar-moblie>
 
   </div>
 </template>
@@ -103,6 +103,7 @@ export default {
       hot_book_page_size: 0,       //热门图书每页展示的数量
       hot_book_page: 1,            //热门图书页码
       articles: [],                //推荐文章的数据
+      nav_index: 0,                //导航的下标
     };
   },
   watch: {
@@ -192,6 +193,10 @@ export default {
       }else{
         return
       }
+    },
+    //更新nav_index
+    updata_nav_index(index){
+      this.nav_index = index
     }
   },
   components: {
@@ -280,7 +285,7 @@ export default {
 }
 @media screen and (max-width: 768px) {
   #index {
-    .content {
+    .container {
       .row {
         display: block;
         .left,
