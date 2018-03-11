@@ -18,9 +18,11 @@
               <Row class="block-books">
                 <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="(item, index) in hot_books" v-show="index >= (hot_book_page - 1) * hot_book_page_size && index < hot_book_page * hot_book_page_size" :key="item.id"> 
                   <img class="book-img" src="" alt="">
-                  <div class="name text-over">{{item.name}}</div>
-                  <div class="author text-over">{{item.author}}</div>
-                  <div class="translators text-over">{{item.translators}}</div>
+                  <div class="detail-block">
+                    <div class="name text-over">{{item.name}}</div>
+                    <div class="author text-over">{{item.author}}</div>
+                    <div class="translators text-over">{{item.translators}}</div>
+                  </div>
                 </i-col>
               </Row>
             </div>
@@ -270,8 +272,10 @@
         }
         .block-books {
           width: 100%;
+          padding-top: 14px;
           .block-book {
-            padding: 20px 0;
+            padding-bottom: 14px;
+            text-align: center;
             .book-img {
               width: 133px;
               height: 175px;
@@ -279,9 +283,13 @@
               background-color: $mainC;
               border-radius: 4px;
             }
-            .name, .author, .translators{
-              text-align: left;
-              font-size: 14px;
+            .detail-block{
+              width: 133px;
+              margin: 0 auto;
+              .name, .author, .translators{
+                text-align: left;
+                font-size: 14px;
+              }
             }
           }
         }
@@ -301,6 +309,7 @@
         width: 100%;
         .item {
           line-height: 1.5;
+          display: flex;
           .title,
           .content {
             display: inline-block;

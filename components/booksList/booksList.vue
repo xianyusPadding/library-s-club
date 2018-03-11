@@ -3,9 +3,11 @@
     <Row class="books-warpper">
       <i-col :lg="3" :md="3" :sm="4" :xs="12" class="block-book" v-for="(item, index) in books" v-show="index >= (book_page - 1) * book_page_size && index < book_page * book_page_size" :key="item.id"> 
           <img class="book-img" src="" alt="">
-          <div class="name text-over">{{item.name}}</div>
-          <div class="author text-over">{{item.author}}</div>
-          <div class="translators text-over">{{item.translators}}</div>
+          <div class="detail-block">
+            <div class="name text-over">{{item.name}}</div>
+            <div class="author text-over">{{item.author}}</div>
+            <div class="translators text-over">{{item.translators}}</div>
+          </div>
         </i-col>
     </Row>
 
@@ -80,8 +82,10 @@
 @import "../../assets/css/color.scss";
 .books-list {
   .books-warpper {
+    padding-top: 14px;
     .block-book {
-      padding: 20px 0;
+      padding-bottom: 14px;
+      text-align: center;
       .book-img {
         width: 133px;
         height: 175px;
@@ -89,11 +93,15 @@
         background-color: $mainC;
         border-radius: 4px;
       }
-      .name,
-      .author,
-      .translators {
-        text-align: left;
-        font-size: 14px;
+      .detail-block {
+        width: 133px;
+        margin: 0 auto;
+        .name,
+        .author,
+        .translators {
+          text-align: left;
+          font-size: 14px;
+        }
       }
     }
   }
