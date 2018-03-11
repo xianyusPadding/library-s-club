@@ -1,105 +1,98 @@
 <template>
-  <div id="index">
-    <!-- pc的navbar -->
-    <navbar-pc v-if="device === 0" :nav-index="nav_index" @updataNavIndex="updata_nav_index" :body-width="body_width"></navbar-pc>
+  <lib-main :navIndex="nav_index">
+    <div id="index">
+      <!-- 走马灯 -->
+      <l-carousel :carousel-data="carouselData" :duration="duration" :body-width="body_width"></l-carousel>
 
-    <!-- mobile端的header -->
-    <header-mobile v-if="device === 1"></header-mobile>
-
-    <!-- 走马灯 -->
-    <l-carousel :carousel-data="carouselData" :duration="duration" :body-width="body_width"></l-carousel>
-
-    <div class="container">
-      <div class="row">
-        <div class="left">
-          <div class="hot-book block-shadow">
-            <h2 class="dot-line-title">热门图书</h2>
-            <!-- v-if="device === 0" -->
-            <div class="iconWrapper">
-              <a href="javascript:void(0)" @click="updata_hot_book_page(0)"><Icon type="android-arrow-dropleft-circle" style="margin-right: 10px;"></Icon></a>
-              <a href="javascript:void(0)" @click="updata_hot_book_page(1)"><Icon type="android-arrow-dropright-circle"></Icon></a>
+      <div class="container">
+        <div class="row">
+          <div class="left">
+            <div class="hot-book block-shadow">
+              <h2 class="dot-line-title">热门图书</h2>
+              <!-- v-if="device === 0" -->
+              <div class="iconWrapper">
+                <a href="javascript:void(0)" @click="updata_hot_book_page(0)"><Icon type="android-arrow-dropleft-circle" style="margin-right: 10px;"></Icon></a>
+                <a href="javascript:void(0)" @click="updata_hot_book_page(1)"><Icon type="android-arrow-dropright-circle"></Icon></a>
+              </div>
+              
+              <Row class="block-books">
+                <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="(item, index) in hot_books" v-show="index >= (hot_book_page - 1) * hot_book_page_size && index < hot_book_page * hot_book_page_size" :key="item.id"> 
+                  <img class="book-img" src="" alt="">
+                  <div class="name text-over">{{item.name}}</div>
+                  <div class="author text-over">{{item.author}}</div>
+                  <div class="translators text-over">{{item.translators}}</div>
+                </i-col>
+              </Row>
             </div>
-            
-            <Row class="block-books">
-              <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="(item, index) in hot_books" v-show="index >= (hot_book_page - 1) * hot_book_page_size && index < hot_book_page * hot_book_page_size" :key="item.id"> 
-                <img class="book-img" src="" alt="">
-                <div>{{item.id}}</div>
-              </i-col>
-            </Row>
+            <div class="rec-article block-shadow">
+              <h2 class="dot-line-title">推荐文章</h2>
+
+              <articles-list :articles="articles"></articles-list>
+
+            </div>
           </div>
-          <div class="rec-article block-shadow">
-            <h2 class="dot-line-title">推荐文章</h2>
-
-            <rec-article :articles="articles"></rec-article>
-
-          </div>
-        </div>
-        <div class="right">
-          <div class="block-shadow">
-            <h2 class="dot-line-title">社区动态</h2>
-            <div class="block new-mess-block">
-              <h3 class="dot-line-title2">最新书讯</h3>
-              <ul class="warpper">
-                <li class="item">
-                  <h4 class="title">一月书讯：</h4>
-                  <p class="content text-over">13本好书与你一起开工</p>
-                </li>
-                <li class="item">
-                  <h4 class="title">二月书讯：</h4>
-                  <p class="content text-over">13本好书与你一起开工</p>
-                </li>
-              </ul>
-            </div>
-            <div class="block tip-block">
-              <h3 class="dot-line-title2">广告</h3>
-              <div class="tip-content"></div>
-            </div>
-            <div class="block newbook-block">
-              <h3 class="dot-line-title2">即将上市</h3>
-              <ul class="warpper">
-                <li class="item">
-                  <h4 class="title text-over">程序员的英语</h4>
-                  <p class="author text-over">朴栽浒   李海永   颜廷连   译</p>
-                </li>
-                <li class="item">
-                  <h4 class="title">Python编程导论（第2版）</h4>
-                  <p class="author">John V. Guttag   陈光欣   译</p>
-                </li>
-                <li class="item">
-                  <h4 class="title">程序员的英语</h4>
-                  <p class="author">朴栽浒   李海永   颜廷连   译</p>
-                </li>
-                <li class="item">
-                  <h4 class="title">Python编程导论（第2版）</h4>
-                  <p class="author">John V. Guttag   陈光欣   译</p>
-                </li>
-                <li class="item">
-                  <h4 class="title">程序员的英语</h4>
-                  <p class="author">朴栽浒   李海永   颜廷连   译</p>
-                </li>
-                <li class="item">
-                  <h4 class="title">Python编程导论（第2版）</h4>
-                  <p class="author">John V. Guttag   陈光欣   译</p>
-                </li>
-              </ul>
+          <div class="right">
+            <div class="block-shadow">
+              <h2 class="dot-line-title">社区动态</h2>
+              <div class="block new-mess-block">
+                <h3 class="dot-line-title2">最新书讯</h3>
+                <ul class="warpper">
+                  <li class="item">
+                    <h4 class="title">一月书讯：</h4>
+                    <p class="content text-over">13本好书与你一起开工</p>
+                  </li>
+                  <li class="item">
+                    <h4 class="title">二月书讯：</h4>
+                    <p class="content text-over">13本好书与你一起开工</p>
+                  </li>
+                </ul>
+              </div>
+              <div class="block tip-block">
+                <h3 class="dot-line-title2">广告</h3>
+                <div class="tip-content"></div>
+              </div>
+              <div class="block newbook-block">
+                <h3 class="dot-line-title2">即将上市</h3>
+                <ul class="warpper">
+                  <li class="item">
+                    <h4 class="title text-over">程序员的英语</h4>
+                    <p class="author text-over">朴栽浒   李海永   颜廷连   译</p>
+                  </li>
+                  <li class="item">
+                    <h4 class="title">Python编程导论（第2版）</h4>
+                    <p class="author">John V. Guttag   陈光欣   译</p>
+                  </li>
+                  <li class="item">
+                    <h4 class="title">程序员的英语</h4>
+                    <p class="author">朴栽浒   李海永   颜廷连   译</p>
+                  </li>
+                  <li class="item">
+                    <h4 class="title">Python编程导论（第2版）</h4>
+                    <p class="author">John V. Guttag   陈光欣   译</p>
+                  </li>
+                  <li class="item">
+                    <h4 class="title">程序员的英语</h4>
+                    <p class="author">朴栽浒   李海永   颜廷连   译</p>
+                  </li>
+                  <li class="item">
+                    <h4 class="title">Python编程导论（第2版）</h4>
+                    <p class="author">John V. Guttag   陈光欣   译</p>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
-
-    <!-- mobile端的navbar -->
-    <navbar-moblie class="fixed-footer" :nav-index="nav_index" @updataNavIndex="updata_nav_index" v-if="device === 1"></navbar-moblie>
-
-  </div>
+  </lib-main>
 </template>
 
 <script>
-  import navbarPc from "~/components/navbar/navbar_pc.vue";
-  import headerMobile from "~/components/headerMobile/headerMobile.vue";
-  import navbarMoblie from "~/components/navbar/navbar_mobile.vue";
+  import libMain from "~/components/main/main.vue";
   import lCarousel from "~/components/lCarousel/lCarousel.vue";
-  import recArticle from "~/components/recArticle/recArticle.vue";
+  import articlesList from "~/components/articlesList/articlesList.vue";
 
   export default {
     data() {
@@ -195,7 +188,12 @@
       //初始化热门图书
       hot_book_init() {
         for (let i = 0; i < 24; i++) {
-          let book = { id: i }
+          let book = {
+            id: i,
+            name: 'name' + i,
+            author: 'author' + i,
+            translators: 'translators' + i
+          }
           this.hot_books.push(book)
         }
       },
@@ -225,16 +223,14 @@
         }
       },
       //更新nav_index
-      updata_nav_index(index) {
-        this.nav_index = index
-      }
+      // updata_nav_index(index) {
+      //   this.nav_index = index
+      // }
     },
     components: {
-      navbarPc,
-      headerMobile,
-      navbarMoblie,
+      libMain,
       lCarousel,
-      recArticle
+      articlesList
     }
   };
 </script>
@@ -276,13 +272,16 @@
           width: 100%;
           .block-book {
             padding: 20px 0;
-            text-align: center;
             .book-img {
               width: 133px;
               height: 175px;
               display: inline-block;
               background-color: $mainC;
               border-radius: 4px;
+            }
+            .name, .author, .translators{
+              text-align: left;
+              font-size: 14px;
             }
           }
         }
@@ -335,10 +334,6 @@
       }
     }
   }
-  .fixed-footer {
-    position: fixed;
-    bottom: 0;
-  }
 }
 @media screen and (max-width: 768px) {
   #index {
@@ -359,7 +354,7 @@
   }
   .block-shadow {
     box-shadow: none;
-    padding: 0 20px;
+    padding: 0 14px;
   }
 }
 </style>

@@ -2,19 +2,19 @@
   <div class="navbar">
     <Row>
       <i-col class="nav-item" span="6">
-        <a href="javascript:void(0)" class="nav-link" :class="{active: nav_index === 0}" @click="nav_visted(0)">
+        <a href="/" class="nav-link" :class="{active: nav_index === 0}" @click="nav_visted(0)">
           <Icon type="ios-paper-outline"></Icon>
           <span class="nav-content">推荐</span>
         </a>
       </i-col>
       <i-col class="nav-item" span="6">
-        <a href="javascript:void(0)" class="nav-link" :class="{active: nav_index === 1}" @click="nav_visted(1)">
+        <a href="/books" class="nav-link" :class="{active: nav_index === 1}" @click="nav_visted(1)">
           <Icon type="ios-book-outline"></Icon>
           <span class="nav-content">图书</span>
         </a>
       </i-col>
       <i-col class="nav-item" span="6">
-        <a href="javascript:void(0)" class="nav-link" :class="{active: nav_index === 2}" @click="nav_visted(2)">
+        <a href="/articles" class="nav-link" :class="{active: nav_index === 2}" @click="nav_visted(2)">
           <Icon type="document-text"></Icon>
           <span class="nav-content">文章</span>
         </a>
@@ -48,7 +48,6 @@
     methods: {
       nav_visted(index){
         this.nav_index = index
-        this.$emit("updataNavIndex", index)
       }
     }
   };
