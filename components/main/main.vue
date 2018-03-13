@@ -35,7 +35,7 @@
       return {
         device: 2,                   //获取设备信息：pc：0、mobile：1
         body_size: '',               //窗口的大小
-        login_state: 1,              //登陆状态
+        login_state: 0,              //登陆状态
       };
     },
     watch: {
