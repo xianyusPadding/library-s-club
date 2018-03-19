@@ -28,31 +28,31 @@
       <!-- 消息框 -->
       <transition name="messageBox">
         <div class="message-box block-shadow"  v-show="message_box_state"  @click.stop>
-            <div class="main"><span class="title">通知</span></div>
-            <div class="message-box-body">
-              <ul class="content" v-if="messages.length > 0" >
-                <li class="item" v-for="i in messages" :key="i.id" :class="{ active: i.is_read != 1 }">
-                  <a href="javascript:void(0)">
-                    <img class="avater" :src="i.avatar"
-                    alt="">
-                    <span class="name">{{ i.name }}</span>
-                    <span class="detail">{{ i.title }}：{{ i.content }}</span>
-                  </a>
-                </li>
-              </ul>
-              <div class="empty-mess" v-else>
-                <p>暂无消息</p>
-              </div>
+          <div class="main"><span class="title">通知</span></div>
+          <div class="message-box-body">
+            <ul class="content" v-if="messages.length > 0" >
+              <li class="item" v-for="i in messages" :key="i.id" :class="{ active: i.is_read != 1 }">
+                <a href="javascript:void(0)">
+                  <img class="avater" src="../../assets/images/empty_avater.jpg"
+                  alt="">
+                  <span class="name">{{ i.name }}</span>
+                  <span class="detail">{{ i.title }}：{{ i.content }}</span>
+                </a>
+              </li>
+            </ul>
+            <div class="empty-mess" v-else>
+              <p>暂无消息</p>
+            </div>
 
-              <!-- <span class="scroll_moreText" v-show="moreTextState"><i class="icon nc-icon nc-dots-05-2"></i>查看更多</span> -->
-            </div>
-            
-            <div class="footer">
-                <span class="set"><a href="{:url('/my_preference')}">设置</a></span>
-                <span class="seeAll"><a href="{:url('/my_message')}">查看全部通知</a></span>
-            </div>
+            <!-- <span class="scroll_moreText" v-show="moreTextState"><i class="icon nc-icon nc-dots-05-2"></i>查看更多</span> -->
           </div>
-        </transition>
+          
+          <div class="footer">
+              <span class="set"><a href="javascript:void(0)">设置</a></span>
+              <span class="seeAll"><a href="/messages">查看全部通知</a></span>
+          </div>
+        </div>
+      </transition>
 
         <!-- 个人中心框 -->
         <transition name="personBox">
@@ -441,6 +441,7 @@
           width: 100%;
           padding: 16px 20px 0 20px;
           position: relative;
+          margin-bottom: 4px;
           .avater {
             width: 46px;
             height: 46px;
@@ -451,7 +452,7 @@
             left: 78px;
             top: 21px;
             line-height: 0.94;
-            font-size: 12px;
+            font-size: 14px;
           }
           .detail {
             position: absolute;

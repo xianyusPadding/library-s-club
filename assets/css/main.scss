@@ -6,6 +6,7 @@ body {
     height: 100%;
     font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
     color: #8d8d8d;
+    font-size: 13px;
 }
 
 li{
@@ -36,6 +37,14 @@ a:visited {
     position: relative;
     border-left: 4px solid #009a61;
     padding-left: 8px
+}
+
+.block-shadow{
+  margin-bottom: 14px;
+}
+
+.dot-line-title{
+  margin-bottom: 14px;
 }
 
 .dot-line-title:after {
@@ -107,6 +116,17 @@ a:visited {
   background-color: $deepC;
   box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
   border-color: $deepC;
-  // color: #fff;
 }
 
+.ivu-btn-warn1{
+  width: 100%;
+  background-color: #F0AD4E;
+  color: #fff;
+}
+
+.ivu-btn-warn1:hover, .ivu-btn-warn1:visited{
+  background-color: #FDBA36;
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+  border-color: #FDBA36;
+  color: #fff;
+}

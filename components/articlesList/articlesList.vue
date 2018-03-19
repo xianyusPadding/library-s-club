@@ -1,15 +1,15 @@
 <template>
   <ul class="article-wrapper">
     <li class="article-item" v-for="(item, index) in articles" :key="item.id">
-      <img class="avater" src="" alt="">
-      <div class="article-center">
+      <a :href="'/article/' + item.id"><img class="avater" src="" alt=""></a>
+      <a :href="'/article/' + item.id" class="article-center">
         <h3 class="title">{{item.title}}</h3>
         <div>
           <p class="content text-over">{{item.content}}</p>
           <span class="author">{{item.author}}</span>
           <span class="time">发表于{{item.time}}</span>
         </div>
-      </div>
+      </a>
       <div class="article-right" :class="{ active: item.rec_state }" @click="updata_rec_state(index)">
         <Icon :type="item.rec_state ? 'ios-heart' : 'ios-heart-outline'"></Icon>
         <div class="text">推荐</div>
@@ -60,6 +60,7 @@ export default {
       margin-right: 14px;
     }
     .article-center {
+      display: block;
       flex: 1;
       .title {
         line-height: 1;
@@ -96,6 +97,7 @@ export default {
       .text {
         color: $deepC;
         margin-top: 5px;
+        font-size: 12px;
       }
     }
     .active {

@@ -20,7 +20,7 @@
         </a>
       </i-col>
       <i-col class="nav-item" span="6">
-        <a href="javascript:void(0)" class="nav-link" :class="{active: nav_index === 3}" @click="nav_visted(3)">
+        <a href="/messages" class="nav-link" :class="{active: nav_index === 3}" @click="nav_visted(3)">
           <Icon type="navicon-round"></Icon>
           <span class="nav-content">消息</span>  
         </a>

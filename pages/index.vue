@@ -16,13 +16,15 @@
               </div>
               
               <Row class="block-books">
-                <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="(item, index) in hot_books" v-show="index >= (hot_book_page - 1) * hot_book_page_size && index < hot_book_page * hot_book_page_size" :key="item.id"> 
-                  <img class="book-img" src="" alt="">
-                  <div class="detail-block">
-                    <div class="name text-over">{{item.name}}</div>
-                    <div class="author text-over">{{item.author}}</div>
-                    <div class="translators text-over">{{item.translators}}</div>
-                  </div>
+                <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="(item, index) in hot_books" v-show="index >= (hot_book_page - 1) * hot_book_page_size && index < hot_book_page * hot_book_page_size" :key="item.id">
+                  <a :href="'/book/' + item.id">
+                    <img class="book-img" src="" alt="">
+                    <div class="detail-block">
+                      <div class="name text-over">{{item.name}}</div>
+                      <div class="author text-over">{{item.author}}</div>
+                      <div class="translators text-over">{{item.translators}}</div>
+                    </div>
+                  </a> 
                 </i-col>
               </Row>
             </div>

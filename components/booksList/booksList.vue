@@ -2,13 +2,15 @@
   <div class="books-list">
     <Row class="books-warpper">
       <i-col :lg="3" :md="3" :sm="4" :xs="12" class="block-book" v-for="(item, index) in books" v-show="index >= (book_page - 1) * book_page_size && index < book_page * book_page_size" :key="item.id"> 
+        <a :href="'/book/' + item.id">
           <img class="book-img" src="" alt="">
           <div class="detail-block">
             <div class="name text-over">{{item.name}}</div>
             <div class="author text-over">{{item.author}}</div>
             <div class="translators text-over">{{item.translators}}</div>
           </div>
-        </i-col>
+         </a>
+      </i-col>
     </Row>
 
   </div>
