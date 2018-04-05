@@ -4,7 +4,7 @@
       <div class="container">
         <Tabs value="new" :animated="false">
           <TabPane label="最新" name="new">
-            <books-list :books="books"></books-list>
+            <books-list :books="new_books"></books-list>
           </TabPane>
           
           <TabPane label="热门" name="hot">标签二的内容</TabPane>
@@ -23,24 +23,32 @@
     data() {
       return {
         nav_index: 1,
-        books: [],          //图书数据
+        new_books: [],          //图书数据
       };
     },
     created() {
-      this.books_init()
+      this.new_books_init()
     },
     methods: {
       //初始化图书
-      books_init() {
-        for (let i = 0; i < 120; i++) {
-          let book = {
-            id: i,
-            name: 'name' + i,
-            author: 'author' + i,
-            translators: 'translators' + i
+      new_books_init() {
+        // for (let i = 0; i < 120; i++) {
+        //   let book = {
+        //     id: i,
+        //     name: 'name' + i,
+        //     author: 'author' + i,
+        //     translators: 'translators' + i
+        //   }
+        //   this.new_books.push(book)
+        // }
+
+        this.$http.get('/api/v0/books/all?pageSize=24&easyState=1').then((res) => {
+          if(res.status === 200){
+            this.new_books = this.new_books.concat(res.data.books)
           }
-          this.books.push(book)
-        }
+        }, (res) => {
+          console.log(res)
+        })
       },
     },
     components: {

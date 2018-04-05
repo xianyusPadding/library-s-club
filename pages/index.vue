@@ -17,12 +17,12 @@
               
               <Row class="block-books">
                 <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="(item, index) in hot_books" v-show="index >= (hot_book_page - 1) * hot_book_page_size && index < hot_book_page * hot_book_page_size" :key="item.id">
-                  <a :href="'/book/' + item.id">
-                    <img class="book-img" src="" alt="">
+                  <a :href="'/book/' + item._id">
+                    <img class="book-img" :src="item.img_url" alt="">
                     <div class="detail-block">
-                      <div class="name text-over">{{item.name}}</div>
+                      <div class="name text-over">{{item.title}}</div>
                       <div class="author text-over">{{item.author}}</div>
-                      <div class="translators text-over">{{item.translators}}</div>
+                      <div class="translators text-over">{{item.translator}}</div>
                     </div>
                   </a> 
                 </i-col>
@@ -149,7 +149,7 @@
     mounted() {
       this.device_init();
       this.win_resize();
-      this.hot_book_init();    //hot_books的假数据
+      this.hot_book_init();     //hot_books的假数据
       this.articles_init();     //推荐文章的假数据
     },
     methods: {
@@ -191,15 +191,13 @@
       },
       //初始化热门图书
       hot_book_init() {
-        for (let i = 0; i < 24; i++) {
-          let book = {
-            id: i,
-            name: 'name' + i,
-            author: 'author' + i,
-            translators: 'translators' + i
+        this.$http.get('/api/v0/books/all?pageSize=24&easyState=1').then((res) => {
+          if(res.status === 200){
+            this.hot_books = this.hot_books.concat(res.data.books)
           }
-          this.hot_books.push(book)
-        }
+        }, (res) => {
+          console.log(res)
+        })
       },
       //初始化推荐文章
       articles_init() {

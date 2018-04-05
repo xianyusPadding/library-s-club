@@ -6,36 +6,36 @@
           <Row style="margin-bottom: 14px">
             <i-col :sm="6" :xs="9">
               <!-- <div class="book-img"></div> -->
-              <img class="book-img" src="../../assets/images/book.png" alt="图书封面">
+              <img class="book-img" :src="book_data.img_url" alt="图书封面">
               <div class="actions">
                 <div class="recommend">
-                  <p class="num">0</p>推荐
+                  <p class="num">{{book_data.recommend_num}}</p>推荐
                 </div>
                 <div class="connected">
-                  <p class="num">0</p>收藏
+                  <p class="num">{{book_data.collection_num}}</p>收藏
                 </div>
                 <div class="read">
-                  <p class="num">0</p>阅读
+                  <p class="num">{{book_data.read_num}}</p>阅读
                 </div>
               </div>
             </i-col>
             <i-col class="book_info" :sm="18" :xs="15">
               <h2 class="title">{{book_data.title}}</h2>
-              <p class="author">{{book_data.author}}</p>
-              <p class="intor">{{book_data.intor}}</p>
+              <p class="author">{{book_data.author}}（作者）</p>
+              <p class="intor">{{book_data.summary}}</p>
             </i-col>
           </Row>
 
           <div class="block-shadow book-features">
             <h3 class="dot-line-title">本书特色</h3>
             <div class="content">
-              本书由奋战在Python开发一线近20年的Luciano Ramalho执笔，Victor Stinner、Alex Martelli等Python大咖担纲技术审稿人，从语言设计层面剖析编程细节，兼顾Python 3和Python 2，告诉你Python中不亲自动手实践就无法理解的语言陷阱成因和解决之道，教你写出风格地道的Python代码。 
+              本书由奋战在Python开发一线近20年的Luciano Ramalho执笔，Victor Stinner、Alex Martelli等Python大咖担纲技术审稿人，从语言设计层面剖析编程细节，兼顾Python 3和Python 2，告诉你Python中不亲自动手实践就无法理解的语言陷阱成因和解决之道，教你写出风格地道的Python代码。<br>
 
-              ● Python数据模型：理解为什么特殊方法是对象行为一致的关键。　　 
-              ● 数据结构：充分利用内置类型，理解Unicode文本和字节二象性。 
-              ● 把函数视作对象：把Python函数视作一等对象，并了解这一点对流行的设计模式的影响。 
-              ● 面向对象习惯用法：通过构建类学习引用、可变性、接口、运算符重载和多重继承。　　 
-              ● 控制流程：学习使用上下文管理器、生成器、协程，以及通过concurrent.futures和asyncio包实现的并发。 
+              ● Python数据模型：理解为什么特殊方法是对象行为一致的关键。　　 <br>
+              ● 数据结构：充分利用内置类型，理解Unicode文本和字节二象性。 <br>
+              ● 把函数视作对象：把Python函数视作一等对象，并了解这一点对流行的设计模式的影响。 <br>
+              ● 面向对象习惯用法：通过构建类学习引用、可变性、接口、运算符重载和多重继承。　　 <br>
+              ● 控制流程：学习使用上下文管理器、生成器、协程，以及通过concurrent.futures和asyncio包实现的并发。 <br>
               ● 元编程：理解特性、描述符、类装饰器和元类的工作原理。　　
             </div>
           </div>
@@ -43,7 +43,9 @@
           <div class="block-shadow book-menu">
             <h3 class="dot-line-title">目录</h3>
             <div class="content">　　
-              
+              <ul class="menu-wrapper">
+                <li class="menu-item" v-for="(item, index) in book_data.catalog" :key="index">{{item.content}}</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -52,12 +54,12 @@
           <div class="block-shadow book-buy">
             <h3 class="dot-line-title">购买</h3>
             <div class="content">　　
-              <div class="Ebook-block">
-                <p class="price-block">电子书：<span class="price">￥39.90</span></p>
+              <div class="Ebook-block" v-if="book_data.e_price">
+                <p class="price-block">电子书：<span class="price">{{book_data.e_price}}</span></p>
                 <Button class="ivu-btn ivu-btn-warn1">购买</Button>
               </div>
-              <div class="Paper-block">
-                <p class="price-block">纸质书：<span class="price">￥69.90</span></p>
+              <div class="Paper-block" v-if="book_data.price">
+                <p class="price-block">纸质书：<span class="price">{{book_data.price}}</span></p>
                 <Button class="ivu-btn ivu-btn-warn1">购买</Button>
               </div>
             </div>
@@ -131,12 +133,7 @@
     data() {
       return {
         book_id: '',
-        book_data: {
-          id: '',
-          title: '',
-          author: '',
-          intor: ''
-        }
+        book_data: {}
       }
     },
     methods: {
@@ -155,12 +152,20 @@
       },
       //生成假数据
       get_book_data(id) {
-        this.book_data = {
-          id: id,
-          title: 'title' + id,
-          author: 'author' + id,
-          intor: 'intor' + id
-        }
+        // this.book_data = {
+        //   id: id,
+        //   title: 'title' + id,
+        //   author: 'author' + id,
+        //   intor: 'intor' + id
+        // }
+        this.$http.get(`/api/v0/books/detail/${id}`).then((res) => {
+          if(res.status === 200){
+            console.log(res.data.book) 
+            this.book_data = res.data.book
+          }
+        }, (res) => {
+          console.log(res)
+        })
       }
     },
     mounted() {

@@ -13,18 +13,9 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  /*
-  ** Customize the progress bar color
-  */
   loading: { color: '#3B8070' },
-  /*
-  ** Build configuration
-  */
   build: {
-    /*
-    ** Run ESLint on save
-    */
-    vendor: ['iview'],
+    vendor: ['axios', 'iview'],
     extend (config, { isDev, isClient }) {
       if (isDev && isClient) {
         config.module.rules.push({
@@ -36,6 +27,13 @@ module.exports = {
       }
     }
   },
-  plugins: ['~plugins/iview'],
-  css: [{ src: '~assets/css/main.scss', lang: 'scss' }]
+  plugins: ['~plugins/iview', '~plugins/axios'],
+  css: [{ src: '~assets/css/main.scss', lang: 'scss' }],
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
+  ],
+  proxy: [
+    ['/api/v0', { target: 'http://localhost:4455' }]
+  ]
 }
