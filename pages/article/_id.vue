@@ -4,10 +4,22 @@
       <div class="container">
         <div class="left">
           <h2 class="title">{{article_data.title}}</h2>
+          <div class="about">
+            <span class="autor">{{article_data.author}}</span>
+            <span class="time">发表于{{article_data.writeTime}}</span>
+          </div>
+
+          <div class="markdown-body block-shadow" v-html="article_data.content"></div>
         </div>
 
         <div class="right">
-
+          <div class="block-shadow">
+            <h3 class="dot-line-title">作者：</h3>
+            <div class="auther-mess">
+              <img class="avater" :src="article_data.avater" alt="">
+              <span class="author">{{article_data.author}}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -20,39 +32,30 @@
     data() {
       return {
         article_id: '',
-        article_data: {
-          id: '',
-          title: '',
-          author: '',
-          intor: ''
-        }
+        article_data: {}
       }
     },
     methods: {
-      //校验路由加载是否正确
-      validate({ id }) {
-        return /^\d+$/.test(id)
-      },
       //获取图书id
       get_article_id() {
-        let pathname = location.pathname
-        let id = pathname.split('/article/')[1]
+        let id = this.$route.params.id
 
-        this.article_id = this.validate(id) ? id : ''
-
+        this.article_id = id
         this.get_article_data(id)
       },
       //生成假数据
       get_article_data(id) {
-        this.article_data = {
-          id: id,
-          title: 'title' + id,
-          author: 'author' + id,
-          intor: 'intor' + id
-        }
+        this.$http.get(`/api/v0/articles/detail/${id}`).then((res) => {
+          if(res.status === 200){
+            this.article_data =  res.data.article
+          }
+        }, (res) => {
+          console.log(res)
+        })
+        
       }
     },
-    mounted() {
+    created() {
       this.get_article_id()
     },
     components: {
@@ -75,11 +78,34 @@
     width: 75%;
     .title{
       font-size: 28px;
+      color: $mainC;
+    }
+    .about{
+      margin-bottom: 30px;
+      .autor{
+        color: $deepC;
+        margin-right: 10px;
+      }
     }
   }
   .right {
     width: 23%;
     margin-bottom: 200px;
+     .auther-mess{
+       display: flex;
+       justify-content: flex-start;
+     }
+    .avater{
+      width: 70px;
+      height: 70px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-right: 14px;
+    }
+    .author{
+      color: $mainC;
+      font-size: 16px;
+    }
   }
 }
 @media screen and (max-width: 768px) {

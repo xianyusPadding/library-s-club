@@ -1,10 +1,10 @@
 <template>
   <div class="main">
     <!-- pc的navbar -->
-    <navbar-pc v-if="device === 0" :nav-index="navIndex" :body-width="body_width" :login-state="login_state"></navbar-pc>
+    <navbar-pc v-if="device === 0" :nav-index="navIndex" :body-width="body_width" :login-state="login_state" @updataloginstate="updata_login_state"></navbar-pc>
 
     <!-- mobile端的header -->
-    <header-mobile v-if="device === 1" :login-state="login_state"></header-mobile>
+    <header-mobile v-if="device === 1" :login-state="login_state" @updataloginstate="updata_login_state"></header-mobile>
 
     <slot></slot>
 
@@ -23,6 +23,7 @@
   import navbarPc from "~/components/navbar/navbar_pc.vue";
   import headerMobile from "~/components/headerMobile/headerMobile.vue";
   import navbarMoblie from "~/components/navbar/navbar_mobile.vue";
+  import { getCookie } from '~/common/cookie'
 
   export default {
     props: {
@@ -54,8 +55,27 @@
     mounted() {
       this.device_init();
       this.win_resize();
+      this.login_init()
     },
     methods: {
+      //登陆判断
+      login_init(){
+        let phone = getCookie('phone')
+        let password = getCookie('password')
+
+        if(phone && password){
+          this.$http.get(`/api/v0/user/loginState?phone=${phone}&password=${password}`).then((res) => {
+            if(res.data.loginState === 1){
+              this.login_state = 1
+            }
+          }, (res) => {
+            console.log(res)
+          })
+        }
+      },
+      updata_login_state(loginState){
+        this.login_state = loginState
+      },
       //获取当前设备：pc端、移动端 & 获取body的width
       device_init() {
         let body_width = document.body.clientWidth;

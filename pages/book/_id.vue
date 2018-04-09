@@ -5,14 +5,13 @@
         <div class="left">
           <Row style="margin-bottom: 14px">
             <i-col :sm="6" :xs="9">
-              <!-- <div class="book-img"></div> -->
               <img class="book-img" :src="book_data.img_url" alt="图书封面">
               <div class="actions">
-                <div class="recommend">
-                  <p class="num">{{book_data.recommend_num}}</p>推荐
+                <div class="recommend" :class="{'active': recomend_state}" @click="book_action('recommend', recomend_state)">
+                  <p class="num recomend-num">{{book_data.recommend_num}}</p>推荐
                 </div>
-                <div class="connected">
-                  <p class="num">{{book_data.collection_num}}</p>收藏
+                <div class="connected" :class="{'active': collect_state}" @click="book_action('collect', collect_state)">
+                  <p class="num connected-num">{{book_data.collection_num}}</p>收藏
                 </div>
                 <div class="read">
                   <p class="num">{{book_data.read_num}}</p>阅读
@@ -22,103 +21,97 @@
             <i-col class="book_info" :sm="18" :xs="15">
               <h2 class="title">{{book_data.title}}</h2>
               <p class="author">{{book_data.author}}（作者）</p>
+              <div class="category-block">
+                <ul class="wrapper">
+                  <li class="item publicationState" v-if="book_data.publication_state">{{book_data.publication_state}}</li>
+                  <a :href="'/bookTag/' + item" class="item category" v-for="(item, index) in book_data.category" :key="index">{{item}}</a>
+                </ul>
+              </div>
               <p class="intor">{{book_data.summary}}</p>
             </i-col>
           </Row>
 
           <div class="block-shadow book-features">
             <h3 class="dot-line-title">本书特色</h3>
-            <div class="content">
-              本书由奋战在Python开发一线近20年的Luciano Ramalho执笔，Victor Stinner、Alex Martelli等Python大咖担纲技术审稿人，从语言设计层面剖析编程细节，兼顾Python 3和Python 2，告诉你Python中不亲自动手实践就无法理解的语言陷阱成因和解决之道，教你写出风格地道的Python代码。<br>
-
-              ● Python数据模型：理解为什么特殊方法是对象行为一致的关键。　　 <br>
-              ● 数据结构：充分利用内置类型，理解Unicode文本和字节二象性。 <br>
-              ● 把函数视作对象：把Python函数视作一等对象，并了解这一点对流行的设计模式的影响。 <br>
-              ● 面向对象习惯用法：通过构建类学习引用、可变性、接口、运算符重载和多重继承。　　 <br>
-              ● 控制流程：学习使用上下文管理器、生成器、协程，以及通过concurrent.futures和asyncio包实现的并发。 <br>
-              ● 元编程：理解特性、描述符、类装饰器和元类的工作原理。　　
-            </div>
+            <div class="content" v-html="book_data.intro"></div>
           </div>
 
           <div class="block-shadow book-menu">
             <h3 class="dot-line-title">目录</h3>
             <div class="content">　　
               <ul class="menu-wrapper">
-                <li class="menu-item" v-for="(item, index) in book_data.catalog" :key="index">{{item.content}}</li>
+                <a :href="item.catalog_id ? `http://www.ituring.com.cn/book/tupubarticle/${item.catalog_id}` : 'javascript:void(0)'" class="menu-item" :class="{ 'menu-can-read': item.catalog_id }" v-for="(item, index) in book_data.catalog" :key="index">{{item.content}}</a>
               </ul>
             </div>
           </div>
         </div>
 
         <div class="right">
-          <div class="block-shadow book-buy">
+          <div class="block-shadow book-buy" v-if="!buy_state">
             <h3 class="dot-line-title">购买</h3>
             <div class="content">　　
               <div class="Ebook-block" v-if="book_data.e_price">
                 <p class="price-block">电子书：<span class="price">{{book_data.e_price}}</span></p>
-                <Button class="ivu-btn ivu-btn-warn1">购买</Button>
+                <Button class="ivu-btn ivu-btn-warn1" @click="buy_book('electronic')">购买</Button>
               </div>
               <div class="Paper-block" v-if="book_data.price">
                 <p class="price-block">纸质书：<span class="price">{{book_data.price}}</span></p>
-                <Button class="ivu-btn ivu-btn-warn1">购买</Button>
+                <Button class="ivu-btn ivu-btn-warn1" @click="buy_book('paper')">购买</Button>
               </div>
             </div>
           </div>
 
           <div class="block-shadow book-publishing-mess">
-            <h3 class="dot-line-title">目录</h3>
+            <h3 class="dot-line-title">出版信息</h3>
             <div class="content">　　
               <ul>
-                <li class="pushMess-item">
+                <li class="pushMess-item" v-if="book_data.title">
                   <div class="name">书名：</div>
-                  <div class="about text-over"></div>
-                </li>
-                <li class="pushMess-item">
-                  <div class="name">系列书名：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">{{ book_data.title }}</div>
                 </li>
                 <li class="pushMess-item">
                   <div class="name">执行编辑：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">暂无</div>
                 </li>
-                <li class="pushMess-item">
+                <li class="pushMess-item" v-if="book_data.publication_date">
                   <div class="name">出版日期：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">{{ book_data.publication_date }}</div>
                 </li>
-                <li class="pushMess-item">
+                <li class="pushMess-item" v-if="book_data.book_num">
                   <div class="name">书号：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">{{ book_data.book_num }}</div>
                 </li>
-                <li class="pushMess-item">
+                <li class="pushMess-item" v-if="book_data.price">
                   <div class="name">定价：</div>
-                  <div class="about text-over"></div>
-                </li>
-                <li class="pushMess-item">
-                  <div class="name">页数：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">{{ book_data.price }}</div>
                 </li>
                 <li class="pushMess-item">
                   <div class="name">印刷方式：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">黑白</div>
                 </li>
                 <li class="pushMess-item">
                   <div class="name">开本：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">16开</div>
                 </li>
-                <li class="pushMess-item">
+                <li class="pushMess-item" v-if="book_data.publication_state">
                   <div class="name">出本状态：</div>
-                  <div class="about text-over"></div>
-                </li>
-                <li class="pushMess-item">
-                  <div class="name">原书名：</div>
-                  <div class="about text-over"></div>
-                </li>
-                <li class="pushMess-item">
-                  <div class="name">原书号：</div>
-                  <div class="about text-over"></div>
+                  <div class="about text-over">{{ book_data.publication_state }}</div>
                 </li>
               </ul>
             </div>
+          </div>
+
+          <div class="block-shadow related-books">
+            <h3 class="dot-line-title">类似的书</h3>
+            <ul class="content">　　
+              <a :href="'/book/' + item._id" class="rel-book" v-for="(item, index) in related_books" :key="item._id" v-if="index < 8">
+                <img class="rel-book-img" :src="item.img_url" alt="">
+                <div class="rel-book-about">
+                  <p class="rel-book-title">{{item.title}}</p>
+                  <p class="rel-book-author">{{item.author}}</p>
+                </div>
+              </a>
+            </ul>
           </div>
 
         </div>
@@ -128,48 +121,340 @@
 </template>
 
 <script type='text/ecmascript-6'>
-  import libMain from "~/components/main/main.vue";
+  import libMain from "~/components/main/main.vue"
+  import { getCookie } from '~/common/cookie'
   export default {
     data() {
       return {
         book_id: '',
-        book_data: {}
+        book_data: {},
+        related_books: [],
+        recomend_state: 0,            //获取用户是否推荐、购买、收藏该书
+        collect_state: 0,
+        buy_state: 0,
+        bookShop_data: [],
+        //价格的统计
+        priceClearing: {
+          total: 0,
+          freight: 10
+        },
+        //订单地址
+        order_address: ''
       }
     },
     methods: {
-      //校验路由加载是否正确
-      validate({ id }) {
-        return /^\d+$/.test(id)
+      //购买提交
+      buy_book(param) {
+        let state = 0
+        param === 'electronic' ? state = 0 : state = 1
+
+        if (!localStorage.getItem('bookShop_data')) {
+          localStorage.setItem('bookShop_data', JSON.stringify([
+            {
+              _id: this.book_data._id,
+              title: this.book_data.title,
+              price: state ? this.book_data.price : this.book_data.e_price,
+              kind: state ? '纸质书' : '电子书',
+              num: 1
+            }
+          ]));
+
+          this.bookShop_data = [{
+            _id: this.book_data._id,
+            title: this.book_data.title,
+            price: state ? this.book_data.price : this.book_data.e_price,
+            kind: state ? '纸质书' : '电子书',
+            num: 1
+          }]
+        } else {
+          let bookShop_data = JSON.parse(localStorage.getItem('bookShop_data'))
+          let num = 0
+
+          let _this = this
+          bookShop_data.map((x) => {
+            if (x._id === this.book_data._id) {
+              num++
+            }
+          })
+          num === 0 ? localStorage.setItem('bookShop_data', JSON.stringify(bookShop_data = bookShop_data.concat([
+            {
+              _id: this.book_data._id,
+              title: this.book_data.title,
+              price: state ? this.book_data.price : this.book_data.e_price,
+              kind: state ? '纸质书' : '电子书',
+              num: 1
+            }
+          ]))) : ''
+
+          this.bookShop_data = bookShop_data
+        }
+
+        let shop_data = this.bookShop_data
+        let total_price = 0
+
+        for (let i = 0; i < shop_data.length; i++) {
+          let unit_price = parseFloat(shop_data[i].price.split('￥')[1])
+          total_price += unit_price * shop_data[i].num
+        }
+
+        this.priceClearing.total = total_price
+
+        this.buy_modal()
+      },
+      //购买的modal
+      buy_modal() {
+        this.$Modal.confirm({
+          okText: '购买',
+          width: '660px',
+          render: (h) => {
+            return h('div', {
+              style: {
+                width: '100%'
+              }
+            }, [
+                h('h3', {
+                  style: {
+                    marginBottom: '14px'
+                  }
+                }, '我的购书袋：'),
+                h('Table', {
+                  props: {
+                    columns: [
+                      {
+                        title: '书名',
+                        key: 'title'
+                      },
+                      {
+                        title: '价格',
+                        key: 'price'
+                      },
+                      {
+                        title: '版本',
+                        key: 'kind'
+                      },
+                      {
+                        title: '数量',
+                        key: 'number',
+                        render: (h, params) => {
+                          return h('InputNumber', {
+                            style: {
+                              width: '50px'
+                            },
+                            on: {
+                              'on-change': (val) => {
+                                // console.log(this.bookShop_data[params.index].num)
+                                // if(this.bookShop_data[params.index].num > val){
+                                //   this.priceClearing.total -= parseFloat(this.bookShop_data[params.index].price.split('￥')[1])
+                                // }else{
+                                //   this.priceClearing.total += parseFloat(this.bookShop_data[params.index].price.split('￥')[1])
+                                // }
+
+                                // this.bookShop_data[index].num = val
+
+                                // this.priceClearing.total = parseFloat(this.priceClearing.total.toFixed(2))
+
+                                // localStorage.setItem('bookShop_data', JSON.stringify(this.bookShop_data))
+                              }
+                            }
+                          })
+                        }
+                      },
+                      {
+                        title: '删除',
+                        key: 'actions',
+                        align: 'center',
+                        render: (h, params) => {
+                          return h('div', [
+                            h('Button', {
+                              style: {
+                                fontSize: '18px'
+                              },
+                              on: {
+                                'click': () => {
+                                  let less_price = parseFloat(this.bookShop_data[params.index].price.split('￥')[1]) * this.bookShop_data[params.index].num
+
+                                  this.bookShop_data.splice(params.index, 1)
+
+                                  this.priceClearing.total -= less_price
+
+                                  localStorage.setItem('bookShop_data', JSON.stringify(this.bookShop_data))
+                                }
+                              }
+                            }, '×')
+                          ]);
+                        }
+                      },
+                    ],
+                    data: this.bookShop_data
+                  }
+                }),
+                h("div", {
+                  style: {
+                    display: "flex",
+                    margin: "14px 0",
+                    alignItems: "center"
+                  }
+                }, [
+                    h("span", {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                      "收货地址："
+                    ),
+                    h("Input", {
+                      props: {
+                        placeholder: "Enter some..."
+                      },
+                      style: {
+                        flex: "1"
+                      },
+                      on: {
+                        input: val => {
+                          this.order_address = val
+                        }
+                      }
+                    })
+                  ]),
+                h("div", {
+                  style: {
+                    display: "flex",
+                    margin: "14px 0"
+                  }
+                }, [
+                    h("span", {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                      "订单结算："
+                    ),
+                    h('div', {
+                      style: {
+                        flex: 1,
+                        textAlign: 'right'
+                      }
+                    }, [
+                        h('p', `合计金额：￥${this.priceClearing.total}`),
+                        h('p', `（满 99 元包邮，运费规则）运费：${this.priceClearing.freight} 元`),
+                        h('p', `实际支付：${this.priceClearing.total - (this.priceClearing.total > 99 ? this.priceClearing.freight : 0)} 元`)
+                      ])
+                  ]),
+              ])
+          },
+          onOk: () => {
+            if (this.bookShop_data.length === 0){
+              this.$Message.warning('订单不得为空！')
+            } else if (this.order_address === '') {
+              this.$Message.warning('收货地址不得为空！')
+            } else{
+              let data = this.bookShop_data
+              let books = []
+              data.forEach((val, index) => {
+                books[index] = {
+                  _id: data[index]._id,
+                  num: data[index].num,
+                  title: data[index].title
+                }
+              })
+              let totalPrice = this.priceClearing.total - (this.priceClearing.total > 99 ? this.priceClearing.freight : 0)
+              this.$http.post('/api/v0/order/submit', {
+                books: books,
+                phone: getCookie('phone'),
+                totalPrice: totalPrice,
+                address: this.order_address
+              }).then(res => {
+                if(res.data.code === 0){
+                  this.$Message.success('下单成功！')
+                }
+              }, res => {
+                console.log(res)
+              })
+            }
+          }
+        })
+      },
+      //获取用户对书的状态 是否购买等
+      get_userActionMess() {
+        let phone = getCookie('phone') || ''
+        let bookId = this.book_id || ''
+
+        if (!phone || !bookId) {
+          return
+        }
+
+        this.$http.get(`/api/v0/user/actionState?phone=${phone}&bookId=${bookId}`).then(res => {
+          this.recomend_state = res.data.recomend_state
+          this.collect_state = res.data.collect_state
+          this.buy_state = res.data.buy_state
+        }, res => {
+          console.log(res)
+        })
+      },
+      //对书进行推荐、阅读、收藏等操作
+      book_action(Action, state = 1) {
+        let phone = getCookie('phone')
+        let action = Action
+        let bookId = this.book_id
+
+        if (state) {
+          return
+        }
+        if (!phone) {
+          this.$Message.warning('请先登录');
+        }
+        if (action === 'recommend' && this.recomend_state === 1) {
+          return
+        }
+        if (action === 'collect' && this.collect_state === 1) {
+          return
+        }
+        this.$http.get(`/api/v0/user/actions?phone=${phone}&action=${action}&bookId=${bookId}`).then(res => {
+          if (res.data.code === 0) {
+            if (action === 'recommend') {
+              this.recomend_state = 1
+              this.$Message.success(`推荐成功`)
+              this.book_data.recommend_num = this.book_data.recommend_num + 1
+              // console.log()
+            } else if (action === 'collect') {
+              this.collect_state = 1
+              this.$Message.success(`收藏成功`)
+              this.book_data.collection_num = this.book_data.collection_num + 1
+            }
+          }
+
+        }, res => {
+          console.log(res)
+        })
       },
       //获取图书id
       get_book_id() {
-        let pathname = location.pathname
-        let id = pathname.split('/book/')[1]
+        // let pathname = location.pathname
+        let id = this.$route.params.id
 
-        this.book_id = this.validate(id) ? id : ''
+        this.book_id = id
 
         this.get_book_data(id)
       },
       //生成假数据
       get_book_data(id) {
-        // this.book_data = {
-        //   id: id,
-        //   title: 'title' + id,
-        //   author: 'author' + id,
-        //   intor: 'intor' + id
-        // }
         this.$http.get(`/api/v0/books/detail/${id}`).then((res) => {
-          if(res.status === 200){
-            console.log(res.data.book) 
+          if (res.status === 200) {
+            console.log(res.data)
             this.book_data = res.data.book
+            this.related_books = res.data.relativeBooks
           }
         }, (res) => {
           console.log(res)
         })
       }
     },
-    mounted() {
+    created() {
       this.get_book_id()
+    },
+    mounted() {
+      this.book_action('read', 0)
+      this.get_userActionMess()
     },
     components: {
       libMain
@@ -211,6 +496,10 @@
           font-size: 18px;
         }
       }
+      .recommend,
+      .connected {
+        cursor: pointer;
+      }
       .active {
         background-color: #ddd;
         box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
@@ -229,21 +518,65 @@
     }
     .book_info {
       .title {
-        line-height: 50px;
+        line-height: 1.2;
+        margin: 8px 0;
         font-size: 28px;
+        color: $mainC;
+        font-weight: 400;
       }
       .author {
         color: #bdbdbd;
-        margin: 5px 0 15px 0;
-        font-size: 15px;
+        margin: 5px 0 10px 0;
+        font-size: 14px;
       }
       .intor {
         color: #adadad;
-        font-size: 15px;
+        font-size: 14px;
+      }
+      .category-block {
+        margin-bottom: 10px;
+        .wrapper .item {
+          padding: 3px 8px;
+          margin-right: 5px;
+          display: inline-block;
+          color: #fff;
+        }
+        .publicationState {
+          background-color: #fdba36;
+          border-bottom-left-radius: 4px;
+          border-top-left-radius: 4px;
+          border-bottom-right-radius: 12px;
+          border-top-right-radius: 12px;
+        }
+        .category {
+          cursor: pointer;
+          border-radius: 4px;
+          background-color: $mainC;
+          display: block;
+        }
+      }
+    }
+    .book-features {
+      .content {
+        font-size: 13px;
+        line-height: 26px;
       }
     }
     .book-menu {
-      .content {
+      .menu-wrapper {
+        .menu-item {
+          display: block;
+          cursor: pointer;
+          line-height: 36px;
+          text-indent: 10px;
+        }
+        .menu-can-read {
+          color: $mainC;
+        }
+        .menu-item:nth-child(odd) {
+          background-color: #eee;
+          border-radius: 4px;
+        }
       }
     }
   }
@@ -273,6 +606,26 @@
           }
           .about {
             flex: 5;
+          }
+        }
+      }
+    }
+    .related-books {
+      .rel-book {
+        width: 100%;
+        display: block;
+        margin-bottom: 10px;
+        .rel-book-img {
+          width: 40%;
+          display: inline-block;
+        }
+        .rel-book-about {
+          width: 50%;
+          display: inline-block;
+          margin-left: 10%;
+          vertical-align: top;
+          .rel-book-title {
+            margin-bottom: 8px;
           }
         }
       }

@@ -15,7 +15,7 @@
             <span>{{loginState ? '登出' : '登录'}}</span>
             <Icon type="log-in"></Icon>
           </li>
-          <li v-if="!loginState" class="per-item" @click="signout">
+          <li v-if="!loginState" class="per-item" @click="register">
             <span>注册</span>
             <Icon type="log-out"></Icon>
           </li>
@@ -35,7 +35,7 @@
 </template>
 
 <script type='text/ecmascript-6'>
-
+  import { getCookie, setCookie } from '~/common/cookie'
   export default {
     props: {
       loginState: {
@@ -46,7 +46,15 @@
     data() {
       return {
         search_value: '',
-        person_menu_state: 0        //个人菜单栏的显示状态
+        person_menu_state: 0,        //个人菜单栏的显示状态
+        userInfo: {                //用户信息
+          phone: '',
+          userName: '',
+          password: '',
+          _password: '',
+          vailNum: '',
+        },     
+        registerModalState: true
       }
     },
     mounted() {
@@ -65,10 +73,10 @@
         this.person_menu_state = !this.person_menu_state
       },
       signin(state) {
-        this.person_menu_show()
+        let _this = this
         if (!state) {
           this.$Modal.confirm({
-            width: '320px',
+            width: '360px',
             okText: '登录',
             render: (h) => {
               return h('ul', {
@@ -100,8 +108,16 @@
                         }
                       }, '手机号码：'),
                       h('Input', {
+                        props: {
+                          value: this.userInfo.phone
+                        },
                         style: {
                           flex: '1'
+                        },
+                        on: {
+                          input: val => {
+                            this.userInfo.phone = val
+                          }
                         }
                       })
                     ]),
@@ -118,21 +134,50 @@
                         }
                       }, '密码：'),
                       h('Input', {
+                        props: {
+                          value: this.userInfo.password
+                        },
                         style: {
                           flex: '1'
+                        },
+                        on: {
+                          input: val => {
+                            this.userInfo.password = val
+                          }
                         }
                       })
                     ])
                 ])
+            },
+            onOk: () => {
+              let userInfo = _this.userInfo
+              if(userInfo.phone === '' || userInfo.phone.length != 11){
+                _this.$Message.warning('手机号码格式不对！')
+              }else if(userInfo.password === ''){
+                _this.$Message.warning('密码不得为空！')
+              }else{
+                _this.$http.post('/api/v0/user/login', userInfo).then(res => {
+                  if(res.data.code === -1){
+                    _this.$Message.warning(res.data.message)
+                  }else {
+                    _this.$Message.success('登录成功')
+                    setCookie('phone', res.data.phone)
+                    setCookie('password', res.data.password)
+                    _this.$emit('updataloginstate', 1)
+                  }
+                })
+              }
             }
           })
         }
       },
-      signout() {
+      register() {
+        let _this = this
         this.person_menu_show()
         this.$Modal.confirm({
           width: '320px',
           okText: '注册',
+          loading: false,
           render: (h) => {
             return h('ul', {
               style: {
@@ -163,8 +208,16 @@
                       }
                     }, '手机号码：'),
                     h('Input', {
+                      props: {
+                        value: this.userInfo.phone
+                      },
                       style: {
                         flex: '1'
+                      },
+                      on: {
+                        input: val => {
+                          this.userInfo.phone = val
+                        }
                       }
                     })
                   ]),
@@ -182,8 +235,16 @@
                       }
                     }, '昵称：'),
                     h('Input', {
+                      props: {
+                        value: this.userInfo.userName
+                      },
                       style: {
                         flex: '1'
+                      },
+                      on: {
+                        input: val => {
+                          this.userInfo.userName = val
+                        }
                       }
                     })
                   ]),
@@ -201,8 +262,16 @@
                       }
                     }, '密码：'),
                     h('Input', {
+                      props: {
+                        value: this.userInfo.password
+                      },
                       style: {
                         flex: '1'
+                      },
+                      on: {
+                        input: val => {
+                          this.userInfo.password = val
+                        }
                       }
                     })
                   ]),
@@ -220,8 +289,16 @@
                       }
                     }, '确认密码：'),
                     h('Input', {
+                      props: {
+                        value: this.userInfo._password
+                      },
                       style: {
                         flex: '1'
+                      },
+                      on: {
+                        input: val => {
+                          this.userInfo._password = val
+                        }
                       }
                     })
                   ]),
@@ -239,12 +316,40 @@
                       }
                     }, '验证码：'),
                     h('Input', {
+                      props: {
+                        value: this.userInfo.vailNum
+                      },
                       style: {
                         flex: '1'
+                      },
+                      on: {
+                        input: val => {
+                          this.userInfo.vailNum = val
+                        }
                       }
                     })
                   ])
               ])
+          },
+          onOk: () => {
+            let userInfo = _this.userInfo
+            if(userInfo.phone === '' || userInfo.phone.length != 11){
+              _this.$Message.warning('手机号码格式不对！')
+            }else if(userInfo.userName === ''){
+              _this.$Message.warning('昵称不得为空！')
+            }else if(userInfo.password === ''){
+              _this.$Message.warning('密码不得为空！')
+            }else if(userInfo.password != userInfo._password){
+              _this.$Message.warning('两次输入的密码不相同！')
+            }else{
+              _this.$http.post('/api/v0/user/register', userInfo).then(res => {
+                if(res.data.code === -1){
+                  _this.$Message.warning(res.data.message)
+                }else {
+                  _this.$Message.success('注册成功')
+                }
+              })
+            }
           }
         })
       }

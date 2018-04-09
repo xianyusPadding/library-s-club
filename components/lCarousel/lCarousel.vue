@@ -2,7 +2,14 @@
   <div id="ice_carousel" @mouseover="carousel_over" @mouseout="carousel_out" :style="{ height: carousel_height + 'px' }">
       <div class="carousel_list">
         <div class="carousel_item" :class="{ active: index === current }" v-for="(item, index) in carouselData" v-bind:key="item.id" :style="{ background: item.back_color }">
-          <img :src="item.url" :class="{ img_active: index === current }" class="item_img">
+          <div class="img-block">
+            <img :src="item.url" :class="{ img_active: index === current }" :style="{ height: carousel_height + 'px' }" class="item_img">
+            <div class="shelves">
+              <p class="shelves-title">微信公众号　图灵教育</p>
+              <img class="shelves-img" src="http://www.ituring.com.cn/img/qrcode-turingbook-ani.gif" alt="">
+            </div>
+          </div>
+          <!-- <div :class="{ img_active: index === current }" class="item_img" :style="{backgroundImage: `url(${item.url})`}"></div> -->
         </div>
         <ol class="dot_wrapper">
           <li class="dot_box" :class="{ box_active: index === current }" v-for="(item, index) in carouselData"  v-bind:key="item.id" @click="dot_updata_current(index)">
@@ -104,9 +111,9 @@ export default {
 </script>
 
 <style lang='scss' scoped='' type='text/css'>
+@import "../../assets/css/color.scss";
 #ice_carousel {
   width: 100%;
-  height: 300px;
   cursor: pointer;
   .carousel_list {
     width: 100%;
@@ -124,8 +131,12 @@ export default {
       .item_img {
         width: 100%;
         max-width: 1263px;
+        // height: 336px;
         opacity: 0;
         transition: opacity 1s ease-in;
+      }
+      .shelves{
+        display: none;
       }
       .img_active {
         opacity: 1;
@@ -198,5 +209,35 @@ export default {
   .prevOrNext_state-leave-to {
     opacity: 0.2;
   }
+}
+
+// 
+@media screen and (min-width: 1025px) {
+  #ice_carousel .carousel_list .carousel_item .img-block{
+    width: 100%;
+    max-width: 1263px;
+    margin: 0 auto;
+    display: flex;
+    .item_img{
+      width: calc(100% - 263px);
+    }
+    .shelves{
+      flex: 0 0 263px;
+      box-shadow: 1px 0 2px rgba(0, 0, 0, .2);
+      text-align: center;
+      padding-top: 60px;
+      display: block;
+      .shelves-title{
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: rgba(255, 255, 255, .8);
+      }
+      .shelves-img{
+        width: 160px;
+        height: 160px;
+        border-radius: 4px;
+      }
+    }
+  } 
 }
 </style>

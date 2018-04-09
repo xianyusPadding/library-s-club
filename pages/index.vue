@@ -106,20 +106,20 @@
         carouselData: [              //走马灯banner的数据
           {
             id: 0,
-            url: "",
-            back_color: "#027148",
+            url: "https://www.epubit.com/upload//2018/03/4f3f910c0fdc4c279c8917e9bd083c63.jpg",
+            back_color: "#00A0E8",
             light: 1
           },
           {
             id: 1,
-            url: "",
-            back_color: "#009a61",
-            light: 1
+            url: "https://www.epubit.com/upload//2018/03/7727e40a4e1f4f58b4c01eef583865c5.jpg",
+            back_color: "#042552",
+            light: 0
           },
           {
             id: 2,
-            url: "",
-            back_color: "#02BB76",
+            url: "https://www.epubit.com/upload//2018/03/9170103bb9fe4f46b80cf1a884140dae.jpg",
+            back_color: "#3D2094",
             light: 0
           }
         ],
@@ -191,9 +191,18 @@
       },
       //初始化热门图书
       hot_book_init() {
-        this.$http.get('/api/v0/books/all?pageSize=24&easyState=1').then((res) => {
+        for (let i = 1; i <= 24; i++) {
+          let book = {
+            title: 'title',
+            img_url: '',
+            author: 'author',
+            translator: 'translator',
+          }
+          this.hot_books.push(book)
+        }
+        this.$http.get('/api/v0/books/all?pageSize=24&easyState=1&sort=recommend').then((res) => {
           if(res.status === 200){
-            this.hot_books = this.hot_books.concat(res.data.books)
+            this.hot_books = res.data.books
           }
         }, (res) => {
           console.log(res)
@@ -212,6 +221,13 @@
           }
           this.articles.push(article)
         }
+        this.$http.get('/api/v0/articles/all?pageSize=10&easyState=1&sort=recommend').then((res) => {
+          if(res.status === 200){
+            this.articles = res.data.articles || []
+          }
+        }, (res) => {
+          console.log(res)
+        })
       },
       //更新hot_book的页码
       updata_hot_book_page(state) {
@@ -277,14 +293,14 @@
             padding-bottom: 14px;
             text-align: center;
             .book-img {
-              width: 133px;
-              height: 175px;
+              width: 115px;
+              height: 154px;
               display: inline-block;
               background-color: $mainC;
               border-radius: 4px;
             }
             .detail-block{
-              width: 133px;
+              width: 115px;
               margin: 0 auto;
               .name, .author, .translators{
                 text-align: left;

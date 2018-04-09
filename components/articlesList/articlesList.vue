@@ -1,13 +1,13 @@
 <template>
   <ul class="article-wrapper">
-    <li class="article-item" v-for="(item, index) in articles" :key="item.id">
-      <a :href="'/article/' + item.id"><img class="avater" src="" alt=""></a>
-      <a :href="'/article/' + item.id" class="article-center">
+    <li class="article-item" v-for="(item, index) in articles" :key="item._id">
+      <a :href="'/article/' + item._id"><img class="avater" :src="item.avater" alt=""></a>
+      <a :href="'/article/' + item._id" class="article-center">
         <h3 class="title">{{item.title}}</h3>
         <div>
-          <p class="content text-over">{{item.content}}</p>
+          <p class="content text-over">{{item.summary}}</p>
           <span class="author">{{item.author}}</span>
-          <span class="time">发表于{{item.time}}</span>
+          <span class="time">发表于{{item.writeTime}}</span>
         </div>
       </a>
       <div class="article-right" :class="{ active: item.rec_state }" @click="updata_rec_state(index)">
@@ -49,12 +49,12 @@ export default {
   .article-item {
     width: 100%;
     display: flex;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     .avater {
-      flex: 0 0 50px;
+      flex: 0 0 60px;
       display: inline-block;
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       background-color: $mainC;
       border-radius: 4px;
       margin-right: 14px;
@@ -62,14 +62,16 @@ export default {
     .article-center {
       display: block;
       flex: 1;
+      max-width: calc(100% - 124px);
+      margin-right: 10px;
       .title {
-        line-height: 1;
-        font-size: 16px;
-        margin-bottom: 4px;
+        line-height: 1.2;
+        font-size: 15px;
+        margin-bottom: 8px;
       }
       .content {
         line-height: 1;
-        margin-bottom: 4px;
+        margin-bottom: 5px;
       }
       .author,
       .time {
