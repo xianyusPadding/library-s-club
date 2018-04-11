@@ -420,6 +420,8 @@
               this.collect_state = 1
               this.$Message.success(`收藏成功`)
               this.book_data.collection_num = this.book_data.collection_num + 1
+            } else if (action === 'read') {
+              this.book_data.read_num = this.book_data.read_num + 1
             }
           }
 
@@ -436,7 +438,7 @@
 
         this.get_book_data(id)
       },
-      //生成假数据
+      //获取图书信息
       get_book_data(id) {
         this.$http.get(`/api/v0/books/detail/${id}`).then((res) => {
           if (res.status === 200) {
@@ -618,6 +620,7 @@
         .rel-book-img {
           width: 40%;
           display: inline-block;
+          border-radius: 4px;
         }
         .rel-book-about {
           width: 50%;
@@ -636,9 +639,17 @@
   #book {
     .container {
       display: block;
-      .left,
-      .right {
-        width: 100%;
+    }
+    .left{
+      width: 100%;
+    }
+    .right{
+      width: 100%;
+      .related-books .rel-book .rel-book-img{
+        width: 25%;
+      }
+      .related-books .rel-book .rel-book-about{
+        width: 65%;
       }
     }
   }

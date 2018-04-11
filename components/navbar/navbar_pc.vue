@@ -59,13 +59,13 @@
           <div class="person-box block-shadow" v-show="person_box_state"  @click.stop>
             <ul class="content">
               <li class="item">
-                <a href="javascript:void(0)">
+                <a href="/myCenter">
                   <Icon type="person"></Icon>
                   <span class="text">个人中心</span>
                 </a>
               </li>
               <li class="item">
-                <a href="javascript:void(0)">
+                <a href="javascript:void(0)" @click="sign_out">
                   <Icon type="log-out"></Icon>
                   <span class="text">登出</span>
                 </a>
@@ -131,6 +131,14 @@
       }
     },
     methods: {
+      //登出
+      sign_out(){
+        setCookie('phone', '')
+        setCookie('password', '')
+        this.$emit('updataloginstate', 0)
+        this.$Message.success('登出成功')
+        this.person_box_state = 0
+      },
       nav_visted(index) {
         this.nav_index = index
       },
@@ -204,7 +212,8 @@
                     }, '密码：'),
                     h('Input', {
                       props: {
-                        value: this.userInfo.password
+                        value: this.userInfo.password,
+                        type: 'password',
                       },
                       style: {
                         flex: '1'
@@ -331,7 +340,8 @@
                     }, '密码：'),
                     h('Input', {
                       props: {
-                        value: this.userInfo.password
+                        value: this.userInfo.password,
+                        type: 'password'
                       },
                       style: {
                         flex: '1'
@@ -358,7 +368,8 @@
                     }, '确认密码：'),
                     h('Input', {
                       props: {
-                        value: this.userInfo._password
+                        value: this.userInfo._password,
+                        type: 'password'
                       },
                       style: {
                         flex: '1'

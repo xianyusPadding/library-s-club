@@ -8,7 +8,7 @@
         </div>
         <ul class="wrapper">
           <li class="per-item" @click="person_menu_show">
-            <a href="/person">个人中心</a>
+            <a :href="loginState ? '/myCenter' : 'javascript:void(0)'" @click="linkCenter">个人中心</a>
             <Icon type="person"></Icon>
           </li>
           <li class="per-item" @click="signin(loginState)">
@@ -61,6 +61,10 @@
       this.per_menu_hidden()
     },
     methods: {
+      //跳到个人中心的判断
+      linkCenter(){
+        this.loginState === 0 ? this.$Message.warning('请先登录') : ''
+      },
       // 初始化点击外部隐藏person_menu
       per_menu_hidden() {
         let _this = this
@@ -135,7 +139,8 @@
                       }, '密码：'),
                       h('Input', {
                         props: {
-                          value: this.userInfo.password
+                          value: this.userInfo.password,
+                        type: 'password'
                         },
                         style: {
                           flex: '1'
@@ -169,6 +174,12 @@
               }
             }
           })
+        }else{
+          setCookie('phone', '')
+          setCookie('password', '')
+          this.$emit('updataloginstate', 0)
+          this.person_menu_state = 0
+          this.$Message.success('登出成功')
         }
       },
       register() {
@@ -263,7 +274,8 @@
                     }, '密码：'),
                     h('Input', {
                       props: {
-                        value: this.userInfo.password
+                        value: this.userInfo.password,
+                        type: 'password'
                       },
                       style: {
                         flex: '1'
@@ -290,7 +302,8 @@
                     }, '确认密码：'),
                     h('Input', {
                       props: {
-                        value: this.userInfo._password
+                        value: this.userInfo._password,
+                        type: 'password'
                       },
                       style: {
                         flex: '1'

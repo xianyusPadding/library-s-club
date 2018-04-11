@@ -58,30 +58,11 @@
               <div class="block newbook-block">
                 <h3 class="dot-line-title2">即将上市</h3>
                 <ul class="warpper">
-                  <li class="item">
-                    <h4 class="title text-over">程序员的英语</h4>
-                    <p class="author text-over">朴栽浒   李海永   颜廷连   译</p>
-                  </li>
-                  <li class="item">
-                    <h4 class="title">Python编程导论（第2版）</h4>
-                    <p class="author">John V. Guttag   陈光欣   译</p>
-                  </li>
-                  <li class="item">
-                    <h4 class="title">程序员的英语</h4>
-                    <p class="author">朴栽浒   李海永   颜廷连   译</p>
-                  </li>
-                  <li class="item">
-                    <h4 class="title">Python编程导论（第2版）</h4>
-                    <p class="author">John V. Guttag   陈光欣   译</p>
-                  </li>
-                  <li class="item">
-                    <h4 class="title">程序员的英语</h4>
-                    <p class="author">朴栽浒   李海永   颜廷连   译</p>
-                  </li>
-                  <li class="item">
-                    <h4 class="title">Python编程导论（第2版）</h4>
-                    <p class="author">John V. Guttag   陈光欣   译</p>
-                  </li>
+                  <a :href="'/book/' + item._id" class="item" v-for="(item, index) in ready_books" :key="index">
+                    <h4 class="title text-over">{{item.title}}</h4>
+                    <p class="author text-over">{{item.author}}   {{item.translator}}</p>
+                  </a>
+                  
                 </ul>
               </div>
             </div>
@@ -130,6 +111,7 @@
         hot_book_page: 1,            //热门图书页码
         articles: [],                //推荐文章的数据
         nav_index: 0,                //导航的下标
+        ready_books: [],             //即将上市的书籍
 
       };
     },
@@ -151,8 +133,17 @@
       this.win_resize();
       this.hot_book_init();     //hot_books的假数据
       this.articles_init();     //推荐文章的假数据
+      this.get_ready_books();
     },
     methods: {
+      //获取即将上市图书
+      get_ready_books(){
+        this.$http.get('/api/v0/books/ready').then( res => {
+          this.ready_books = res.data.books
+        }, res => {
+          console.log(res) 
+        })
+      },
       //获取当前设备：pc端、移动端 & 获取body的width
       device_init() {
         let body_width = document.body.clientWidth;
@@ -347,6 +338,7 @@
       .newbook-block {
         .warpper {
           .item {
+            display: block;
             margin: 10px 0;
           }
           .title {
