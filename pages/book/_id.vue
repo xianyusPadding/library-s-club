@@ -366,6 +366,7 @@
               }).then(res => {
                 if(res.data.code === 0){
                   this.$Message.success('下单成功！')
+                  this.buy_state = 1
                 }
               }, res => {
                 console.log(res)

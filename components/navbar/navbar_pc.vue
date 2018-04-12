@@ -135,6 +135,7 @@
       sign_out(){
         setCookie('phone', '')
         setCookie('password', '')
+        setCookie('userId', '')
         this.$emit('updataloginstate', 0)
         this.$Message.success('登出成功')
         this.person_box_state = 0
@@ -241,6 +242,7 @@
                   _this.$Message.success('登录成功')
                   setCookie('phone', res.data.phone)
                   setCookie('password', res.data.password)
+                  setCookie('userId', res.data._id)
                   _this.$emit('updataloginstate', 1)
                 }
               })

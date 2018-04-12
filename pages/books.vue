@@ -70,7 +70,6 @@
           if(res.status === 200){
             this.new_books = res.data.books
             this.books_count = res.data.count
-            console.log(this.new_books.length)
           }
         }, (res) => {
           console.log(res)

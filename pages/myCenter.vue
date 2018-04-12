@@ -10,9 +10,15 @@
               <p class="createDate">社区生日：{{ userInfo.meta ? userInfo.meta.createdAt.substring(0, 10) : '2018-04-10' }}</p>
               <p class="myIntroduction">个人简介：{{userInfo.introduction ? userInfo.introduction : '这个人很懒，什么都没留下'}}~</p>
             </div>
-          </div>
 
-          <div class="block-shadow my-order">
+            <div class="user-actions">
+              <Button type="primary" class="action-item">修改个人资料</Button>
+              <Button type="primary" class="action-item" @click="update_editor_state(1)">写作</Button>
+            </div>
+          </div>
+          
+          <write-article v-show="writeEditorState" @updateeditorstate="change_editor_state"></write-article>
+          <div class="block-shadow my-order" v-if="buyBooks.length">
             <h2 class="dot-line-title">已购买书籍</h2>
             <Row class="block-books">
               <i-col :lg="4" :md="6" :sm="6" :xs="12" class="block-book" v-for="item in buyBooks" :key="item._id">
@@ -28,13 +34,20 @@
             </Row>
           </div>
 
-          <div class="block-shadow my-order">
+          <div class="block-shadow my-order" v-if="myArticles.length">
             <h2 class="dot-line-title">我的文章</h2>
+            <articles-list :articles="myArticles"></articles-list>
+          </div>
+
+          <div class="block-shadow my-order">
+            <h2 class="dot-line-title">我的收藏</h2>
+
+
           </div>
         </div>
 
         <div class="right">
-          <div class="block-shadow near-read-book">
+          <div class="block-shadow near-read">
             <h2 class="dot-line-title">最近浏览</h2>
             <h3 class="dot-line-title2">图书：</h3>
             <ul class="read-books">
@@ -45,6 +58,12 @@
             </ul>
 
             <h3 class="dot-line-title2">文章：</h3>
+            <ul class="read-articles">
+              <a :href="'/article/' + item._id" class="read-item" v-for="(item, index) in readArticles" :key="index">
+                <h4 class="title text-over">{{item.title}}</h4>
+                <p class="author text-over">{{item.author}}</p>
+              </a>
+            </ul>
           </div>
         </div>
       </div>
@@ -54,7 +73,9 @@
 
 <script type='text/ecmascript-6'>
   import libMain from "~/components/main/main.vue";
+  import writeArticle from "~/components/writeArticle/writeArticle.vue";
   import { getCookie } from '~/common/cookie'
+  import articlesList from "~/components/articlesList/articlesList.vue";
 
   export default {
     data() {
@@ -63,9 +84,19 @@
         userInfo: {},            //用户信息
         buyBooks: [],            //购买的书籍
         readBooks: [],           //阅读书籍
+        readArticles: [],        //阅读的文章
+        writeEditorState: false, //写作编辑器的状态
+        myArticles: []
       }
     },
     methods: {
+      //更改编辑的状态
+      update_editor_state(state){
+        state ? this.writeEditorState = true : this.writeEditorState = false
+      },
+      change_editor_state(){
+        this.update_editor_state(0)
+      },
       //获取用户信息
       getDetail(phone) {
         if (!phone) {
@@ -76,12 +107,29 @@
           this.userInfo = res.data.user
           this.buyBooks = res.data.buyBooks
 
-          let read_length = res.data.readBooks.length
-          if( read_length > 10){
-            this.readBooks = res.data.readBooks.slice(read_length - 10, read_length - 1)
+          let read_book_length = res.data.readBooks.length
+          if( read_book_length > 10){
+            this.readBooks = res.data.readBooks.slice(read_book_length - 10, read_book_length - 1)
           }else {
             this.readBooks = res.data.readBooks
           }
+
+          let read_art_length = res.data.readArticles.length
+          if( read_book_length > 10){
+            this.readArticles = res.data.readArticles.slice(read_art_length - 10, read_art_length - 1)
+          }else {
+            this.readArticles = res.data.readArticles
+          }
+        }, res => {
+          console.log(res)
+        })
+      },
+      //获取我的文章
+      get_my_article(current){
+        let userId = getCookie('userId')
+
+        this.$http.get(`/api/v0/articles/all?userId=${userId}&current=${current}`).then(res => {
+          this.myArticles = res.data.articles
         }, res => {
           console.log(res)
         })
@@ -90,9 +138,12 @@
     mounted() {
       let phone = getCookie('phone') || ''
       this.getDetail(phone)
+      this.get_my_article(1)
     },
     components: {
-      libMain
+      libMain,
+      writeArticle,
+      articlesList
     }
   }
 </script>
@@ -111,6 +162,7 @@
       .user-about {
         width: 100%;
         display: flex;
+        position: relative;
         .user-avater {
           width: 100px;
           height: 100px;
@@ -124,6 +176,14 @@
           }
           .createDate {
             margin: 20px 0 14px 0;
+          }
+        }
+        .user-actions{
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          .action-item:nth-child(1){
+            margin-right: 10px;
           }
         }
       }
@@ -158,9 +218,9 @@
     .right {
       width: 23%;
       margin-bottom: 200px;
-      .near-read-book{
+      .near-read{
         .dot-line-title2{
-          margin: 4px 0 8px 0;
+          margin: 20px 0 8px 0;
         }
         .read-item{
           display: block;
@@ -180,7 +240,12 @@
   #person {
     .container {
       display: block;
-      .left,
+      .left{
+        width: 100%;
+        .user-about .user-actions{
+          display: none;
+        }
+      }
       .right {
         width: 100%;
       }
