@@ -49,7 +49,7 @@
               userId: getCookie('userId'),
               title: this.title_val,
               content: this.editor.txt.html(),
-              summary: this.editor.txt.text()
+              summary: this.editor.txt.text().substr(0, 120)
             }).then( res => {
               if(res.data.code === 0){
                 this.$Message.success('提交成功!');

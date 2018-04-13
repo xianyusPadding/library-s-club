@@ -133,7 +133,7 @@ a:visited {
   display: none;
 }
 
-.ivu-input-icon{
+.ivu-icon-search{
   top: 12px;
 }
 
@@ -164,7 +164,7 @@ a:visited {
 //滚动条样式
 ::-webkit-scrollbar {
   width: 8px;
-  height: 4px;
+  height: 12px;
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
@@ -183,8 +183,26 @@ a:visited {
   flex-wrap: wrap;
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 768px) {
   .ivu-input-icon{
     top: 0px;
   }
+  .container .left{
+    padding: 0 10px;
+  }
+  .container .right{
+    padding: 0 10px;
+  } 
+}
+
+.container .left{
+  padding-left: 10px;
+}
+
+.container .right{
+  padding-right: 10px;
+}
+
+.ivu-collapse-content>.ivu-collapse-content-box{
+  padding: 0;
 }

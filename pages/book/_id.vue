@@ -50,12 +50,12 @@
           <div class="block-shadow book-buy" v-if="!buy_state">
             <h3 class="dot-line-title">购买</h3>
             <div class="content">　　
-              <div class="Ebook-block" v-if="book_data.e_price">
-                <p class="price-block">电子书：<span class="price">{{book_data.e_price}}</span></p>
+              <div class="Ebook-block" v-if="book_data.price">
+                <p class="price-block">电子书：<span class="price">{{book_data.price}}</span></p>
                 <Button class="ivu-btn ivu-btn-warn1" @click="buy_book('electronic')">购买</Button>
               </div>
-              <div class="Paper-block" v-if="book_data.price">
-                <p class="price-block">纸质书：<span class="price">{{book_data.price}}</span></p>
+              <div class="Paper-block" v-if="book_data.e_price">
+                <p class="price-block">纸质书：<span class="price">{{book_data.e_price}}</span></p>
                 <Button class="ivu-btn ivu-btn-warn1" @click="buy_book('paper')">购买</Button>
               </div>
             </div>

@@ -59,6 +59,12 @@
           <div class="person-box block-shadow" v-show="person_box_state"  @click.stop>
             <ul class="content">
               <li class="item">
+                <a href="/administer">
+                  <Icon type="settings"></Icon>
+                  <span class="text">管理中心</span>
+                </a>
+              </li>
+              <li class="item">
                 <a href="/myCenter">
                   <Icon type="person"></Icon>
                   <span class="text">个人中心</span>
