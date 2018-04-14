@@ -37,7 +37,7 @@
                 订单管理
                 <div slot="content" class="content">
                   <ul class="wrapper">
-                    <li class="item">订单列表</li>
+                    <li class="item" @click="update_tabIndex(40)">订单列表</li>
                   </ul>
                 </div>
             </Panel>
@@ -46,8 +46,14 @@
 
         <div class="right">
           <books-list v-if="tabIndex == 10"></books-list>
+
           <articles-list v-if="tabIndex == 20"></articles-list>
+
           <articles-ready-list v-if="tabIndex == 21"></articles-ready-list>
+          
+          <user-list v-if="tabIndex == 30" :powerVal="powerVal"></user-list>
+
+          <order-list v-if="tabIndex == 40" :powerVal="powerVal"></order-list>
         </div>
       </div>
     </div>
@@ -60,6 +66,8 @@
   import booksList from "~/components/administer/books-list.vue";
   import articlesList from "~/components/administer/articles-list.vue";
   import articlesReadyList from "~/components/administer/articles-ready-list.vue";
+  import userList from "~/components/administer/user-list.vue";
+  import orderList from "~/components/administer/order-list.vue";
 
   export default {
     data() {
@@ -67,9 +75,19 @@
         navIndex: 5,             //当前页的小标
         collapse_model: '10',    //折叠半的默认值
         tabIndex: 10,            //选项卡的下标
+        powerVal: 2,            //获取管理员权限
       }
     },
     methods: {
+      //获取管理员权限
+      get_power_val(){
+        let userId = getCookie('userId')
+        this.$http.get(`/api/v0/user/getPowerState?userId=${userId}`).then( res => {
+          this.powerVal = res.data.power
+        }, res => {
+          console.log(res)
+        })
+      },
       update_tabIndex(index){
         this.tabIndex = index
         location.hash = `tabIndex=${index}`
@@ -85,14 +103,19 @@
         
       }
     },
+    created(){
+    },
     mounted() {
       this.filterHash()
+      this.get_power_val()
     },
     components: {
       libMain,
       booksList,
       articlesList,
-      articlesReadyList
+      articlesReadyList,
+      userList,
+      orderList
     }
   }
 </script>
@@ -127,7 +150,6 @@
     }
     .right {
       width: 78%;
-      margin-bottom: 200px;
     }
   }
 }

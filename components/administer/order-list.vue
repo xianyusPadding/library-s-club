@@ -1,37 +1,16 @@
 <template>
-  <div class="com-container">
-    <!-- <div class="actions">
-      <Button type="primary" size="small" style="padding: " @click="append(0)">新增</Button>
-    </div> -->
-    
+  <div class="com-container">    
     <Table ref="table" border :columns="columns" :data="list_data"></Table>
     <div class="block" v-if="total_num/page_size > 1">
       <Page class="page" :page-size="page_size" :total="total_num" size="small" show-elevator @on-change="updata_page"></Page>
     </div>
-    <!-- 富文本编辑器 -->
-    <Modal
-      v-model='editorModal'
-      width="750"
-      @on-ok="editor_ok"
-      @on-cancel="editor_cancel" class="editorModal">
-      <div class="editors" style="margin-top: 30px;"></div>
-    </Modal>  
   </div>
 </template>
 
 <script type='text/ecmascript-6'>
   export default {
-    props: {
-      typeId: {
-        type: Number,
-        default: 1
-      }
-    },
     data() {
       return {
-        //设定一个全局的editor
-        editor: '',
-        editorModal: false,
         columns: [          //表格第一行数据
           {
             title: "序号",
@@ -43,40 +22,69 @@
             }
           },
           {
-            title: "标题",
-            key: "title",
+            title: "用户名",
+            key: "userName",
             align: 'center',
             fixed: 'left',
             width: 160,
             render: (h, params) => {
-              return h("strong", params.row.title);
+              return h("strong", params.row.userName);
             }
           },
           {
-            title: "作者",
-            key: "author",
+            title: "状态",
+            key: "state",
             align: 'center',
             width: 140,
             render: (h, params) => {
-              return h("strong", params.row.author);
+              return h("strong", params.row.state === 1 ? '待发货' : params.row.state === 2 ? '已发货' : '已收货');
             }
           },
           {
-            title: "写作时间",
-            key: "writeTime",
+            title: "购买清单",
+            key: "books",
+            align: 'center',
+            width: 300,
+            render: (h, params) => {
+              return h("strong", params.row.books.map( x => {
+                return `${x.title} 数量：${x.num}`
+              }));
+            }
+          },
+          {
+            title: "手机号码",
+            key: "phone",
             align: 'center',
             width: 140,
             render: (h, params) => {
-              return h("strong", params.row.writeTime);
+              return h("strong", params.row.phone);
             }
           },
           {
-            title: "概要",
-            key: "summary",
+            title: "地址",
+            key: "address",
             align: 'center',
-            width: 340,
+            width: 140,
             render: (h, params) => {
-              return h("strong", params.row.summary);
+              return h("strong", params.row.address);
+            }
+          },
+          {
+            title: "总价",
+            key: "totalPrice",
+            align: 'center',
+            width: 300,
+            render: (h, params) => {
+              return h("strong", params.row.totalPrice);
+            }
+          },
+          {
+            title: "下单时间",
+            key: "totalPrice",
+            align: 'center',
+            width: 300,
+            render: (h, params) => {
+              return h("strong", params.row.meta.createdAt);
             }
           },
           {
@@ -95,15 +103,35 @@
                       size: "small"
                     },
                     style: {
-                      marginRight: "5px"
+                      marginRight: "5px",
+                      display: params.row.state === 1 ? '' : 'none'
                     },
                     on: {
                       click: () => {
-                        this.release(params.index);
+                        this.sendOrOk(params.index, 2);
                       }
                     }
                   },
-                  "发布"
+                  "发货"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "primary",
+                      size: "small"
+                    },
+                    style: {
+                      marginRight: "5px",
+                      display: params.row.state === 2 ? '' : 'none'
+                    },
+                    on: {
+                      click: () => {
+                        this.sendOrOk(params.index, 3);
+                      }
+                    }
+                  },
+                  "确认收货"
                 ),
                 h(
                   "Button",
@@ -117,29 +145,11 @@
                     },
                     on: {
                       click: () => {
-                        this.return(params.index);
+                        this.remove(params.index);
                       }
                     }
                   },
-                  "回退给用户"
-                ),
-                h(
-                  "Button",
-                  {
-                    props: {
-                      type: "primary",
-                      size: "small"
-                    },
-                    style: {
-                      marginRight: "5px"
-                    },
-                    on: {
-                      click: () => {
-                        this.write_content(params.index);
-                      }
-                    }
-                  },
-                  "查看正文"
+                  "删除"
                 )
               ]);
             }
@@ -149,64 +159,17 @@
         total_num: 0,       //总数
         page_size: 10,      //每页显示的数量
         pageIndex: 1,       //当前的页码
-        data_id: 0,         //图书在使用富文本编辑时的id
-        type_id: 2,         //文章类型
       };
     },
     created() {
       this.get_list_data(1)
     },
-    mounted() {
-      this.editor_init()
-    },
     methods: {
-      //初始化富文本
-      editor_init() {
-        let wangeditor = require('wangeditor')
-
-        this.editor = new wangeditor(".editors");
-        // this.editor.customConfig.uploadImgServer = '/ddlife/api/file/upload_editor.do'
-
-        this.editor.create();
-
-      },
-      //撰写文章
-      write_content(index) {
-        this.editor.txt.html(this.list_data[index].content)
-
-        this.editorModal = true
-
-        this.data_id = this.list_data[index]._id
-      },
-      editor_ok() {
-        let id = this.data_id
-        let content = {
-          intro: this.editor.txt.html()
-        }
-
-        this.$http.post(`/api/v0/books/update`, {
-          bookId: id,
-          content: content
-        }).then(res => {
-          if (res.data.message === 'Success') {
-            if(res.data.ok === 1){
-              this.$Message.success('修改成功')
-            }else{
-              this.$Message.warning('修改出错')
-            }
-          }
-        }, res => {
-          this.$Message.warning('修改出错')
-          console.log(res)
-        })
-      },
-      editor_cancel() {
-      },
-      //获取文章列表
+      //获取数据列表
       get_list_data(curr_page) {
         let page_size = this.page_size
-        this.$http.get(`/api/v0/articles/all?currPage=${curr_page}&pageSize=${page_size}&easyState=0&typeId=${this.type_id}`).then(res => {
-          this.list_data = res.data.articles
+        this.$http.get(`/api/v0/order/all?pageSize=${page_size}&currPage=${curr_page}`).then(res => {
+          this.list_data = res.data.orders
           this.total_num = res.data.count
         }, res => {
           console.log(res)
@@ -214,8 +177,10 @@
       },
       remove(index) {
         let id = this.list_data[index]._id
-        this.$http.post(`/api/v0/articles/remove`, {
-          articleId: id
+
+        
+        this.$http.post(`/api/v0/order/remove`, {
+          orderId: id
         }).then(res => {
           if(res.data.ok === 1){
             this.$Message.success('删除成功')
@@ -228,46 +193,24 @@
           this.$Message.warning('删除出错')
           console.log(res)
         })
+        
       },
-      return(index){
-        let _this = this
+      sendOrOk(index, state){
         let id = this.list_data[index]._id
 
-        _this.$http.post('/api/v0/articles/update', {
-          articleId: id,
-          content: {
-            type_id: 3
-          }
-        }).then(res => {
+        this.$http.post('/api/v0/order/sendOrOk', {
+          orderId: id,
+          state: state
+        }).then( res => {
           if(res.data.ok === 1){
-            this.$Message.success('回退成功')
-            _this.list_data.splice(index, 1);
-          }else{
-            this.$Message.warning('回退出错')
-          }
-        }, res => {
-          this.$Message.warning('回退出错')
-          console.log(res)
-        })
-      },
-      release(index){
-        let _this = this
-        let id = this.list_data[index]._id
+            state === 2 ? this.$Message.success('发货成功') : this.$Message.success('确认收货成功') 
 
-        _this.$http.post('/api/v0/articles/update', {
-          articleId: id,
-          content: {
-            type_id: 1
-          }
-        }).then(res => {
-          if(res.data.ok === 1){
-            this.$Message.success('发布成功')
-            _this.list_data.splice(index, 1);
+            this.list_data[index].state = state
           }else{
-            this.$Message.warning('发布出错')
+            state === 2 ? this.$Message.warning('发货出错') : this.$Message.warning('确认收货出错') 
           }
         }, res => {
-          this.$Message.warning('发布出错')
+          state === 2 ? this.$Message.warning('发货出错') : this.$Message.warning('确认收货出错') 
           console.log(res)
         })
       },

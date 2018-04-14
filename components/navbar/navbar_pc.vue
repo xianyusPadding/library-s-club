@@ -10,7 +10,7 @@
           <a class="article_link strong" :class="{ active: nav_index === 2 }"  href="/articles" @click="nav_visted(2)">文章</a>
         </i-col>
         <i-col :sm="8" :xs="10" class="nav-middle">
-          <i-Input v-model="search_value" icon="search" placeholder="告诉我你想搜索的内容" style="max-width: 240px"></i-Input>
+          <i-Input v-model="search_value" icon="search" placeholder="告诉我你想搜索的内容" style="max-width: 240px" @on-click="search"></i-Input>
         </i-col>
         <i-col :sm="4" :xs="4" class="nav-right">
           <div v-if="loginState === 0">
@@ -58,7 +58,7 @@
         <transition name="personBox">
           <div class="person-box block-shadow" v-show="person_box_state"  @click.stop>
             <ul class="content">
-              <li class="item">
+              <li class="item" v-if="user_power === 3 || user_power === 2">
                 <a href="/administer">
                   <Icon type="settings"></Icon>
                   <span class="text">管理中心</span>
@@ -84,7 +84,7 @@
 </template>
 
 <script type='text/ecmascript-6'>
-  import { setCookie } from '~/common/cookie'
+  import { setCookie, getCookie } from '~/common/cookie'
   export default {
     props: {
       bodyWidth: {
@@ -124,7 +124,8 @@
           _password: '',
           vailNum: '',
         },     
-        registerModalState: true         
+        registerModalState: true,
+        user_power: 1             //用户权限         
       };
     },
     created() {
@@ -137,6 +138,12 @@
       }
     },
     methods: {
+      //搜索
+      search(){
+        setCookie('search_content', this.search_value)
+
+        location.pathname = '/search'
+      },
       //登出
       sign_out(){
         setCookie('phone', '')
@@ -445,6 +452,12 @@
         this.message_box_state = !this.message_box_state
       },
       updata_person_box(){
+        let userId = getCookie('userId')
+        this.$http.get(`/api/v0/user/getPowerState?userId=${userId}`).then( res => {
+          this.user_power = res.data.power
+        }, res => {
+          console.log(res)
+        })
         this.message_box_state = 0
         this.person_box_state = !this.person_box_state
       },

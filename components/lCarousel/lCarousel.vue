@@ -4,7 +4,7 @@
         <div class="carousel_item" :class="{ active: index === current }" v-for="(item, index) in carouselData" v-bind:key="item.id" :style="{ background: item.back_color }">
           <div class="img-block">
             <img :src="item.url" :class="{ img_active: index === current }" :style="{ height: carousel_height + 'px' }" class="item_img">
-            <div class="shelves">
+            <div class="shelves" v-if="carouselData.length">
               <p class="shelves-title">微信公众号　图灵教育</p>
               <img class="shelves-img" src="http://www.ituring.com.cn/img/qrcode-turingbook-ani.gif" alt="">
             </div>
@@ -61,7 +61,7 @@ export default {
         : (this.carousel_height = Math.ceil(newWidth / 730 * 336));
     }
   },
-  mounted() {
+  created() {
     this.light = this.carouselData[0].light;
     this.carouse_init();
   },

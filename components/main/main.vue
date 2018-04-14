@@ -127,7 +127,7 @@
     .fixed-footer {
       width: 100%;
       position: fixed;
-      bottom: 0;
+      bottom: -3px;
       .text{
         width: 100%;
         display: block;
