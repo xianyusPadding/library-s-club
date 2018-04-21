@@ -24,7 +24,7 @@
     </transition>
 
     <div class="panel">
-      <i-Input class="search" v-model="search_value" icon="search" placeholder="告诉我你想搜索的内容"></i-Input>
+      <i-Input class="search" v-model="search_value" icon="search" @on-click="search" placeholder="告诉我你想搜索的内容"></i-Input>
       <a class="person-link" href="javascript:void(0)" @click.stop="person_menu_show">
         <Icon ref="person" class="person" type="person" ></Icon>
       </a>
@@ -61,6 +61,12 @@
       this.per_menu_hidden()
     },
     methods: {
+      //搜索
+      search(){
+        setCookie('search_content', this.search_value)
+
+        location.pathname = '/search'
+      },
       //跳到个人中心的判断
       linkCenter(){
         this.loginState === 0 ? this.$Message.warning('请先登录') : ''

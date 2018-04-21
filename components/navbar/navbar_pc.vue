@@ -10,7 +10,7 @@
           <a class="article_link strong" :class="{ active: nav_index === 2 }"  href="/articles" @click="nav_visted(2)">文章</a>
         </i-col>
         <i-col :sm="8" :xs="10" class="nav-middle">
-          <i-Input v-model="search_value" icon="search" placeholder="告诉我你想搜索的内容" style="max-width: 240px" @on-click="search"></i-Input>
+          <i-Input v-model="search_value" icon="search" placeholder="告诉我你想搜索的内容" style="max-width: 240px" @on-click="search" @on-enter="search"></i-Input>
         </i-col>
         <i-col :sm="4" :xs="4" class="nav-right">
           <div v-if="loginState === 0">
@@ -474,6 +474,7 @@
   .container {
     max-width: 1263px;
     line-height: 56px;
+    padding: 0 10px;
     margin: 0 auto;
     display: flex;
     position: relative;

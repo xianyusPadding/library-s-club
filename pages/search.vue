@@ -2,21 +2,33 @@
   <lib-main :navIndex="nav_index">
     <div id="search" class="top-border-nav">
       <div class="container">
-        <Tabs value="book" :animated="false" class="art-tabs" @on-click="updata_tabs_index">
-          <TabPane label="图书" name="book">
-            <books-list :books="search_books" v-if="tab_index === 0"></books-list>
-            <div class="page-warpper" v-if="tab_index === 0">
-              <Page :total="books_count" :current="books_current" :page-size = 'book_pageSize' show-elevator @on-change="change_book_current" :style="{marginTop: books_count === 0 ? '800px' : ''}"></Page>
-            </div>
-          </TabPane>
-          
-          <TabPane label="文章" name="article">
-            <articles-list :articles="search_articles" v-if="tab_index === 1"></articles-list>
-            <div class="page-warpper" v-if="tab_index === 1">
-              <Page :total="articles_count" :current="articles_current" :page-size = 'article_pageSize' show-elevator @on-change="change_article_current" :style="{marginTop: articles_count === 0 ? '800px' : ''}"></Page>
-            </div>
-          </TabPane>
-        </Tabs>
+        <div class="left">
+          <div class="books-list block-shadow">
+            <h2 class="dot-line-title">图书</h2>     
+            <div class="empty" v-if="!search_books.length">没有搜索到相关图书信息</div>     
+            <Row class="block-books" v-if="search_books.length">
+              <!-- v-show="index >= (book_page - 1) * page_size && index < book_page * book_page_size" -->
+              <i-col :lg="3" :md="4" :sm="6" :xs="12" class="block-book" v-for="item in search_books"  :key="item.id">
+                <a :href="'/book/' + item._id">
+                  <img class="book-img" :src="item.img_url" alt="">
+                  <div class="detail-block">
+                    <div class="name text-over">{{item.title}}</div>
+                    <div class="author text-over">{{item.author}}</div>
+                    <div class="translators text-over">{{item.translator}}</div>
+                  </div>
+                </a> 
+              </i-col>
+            </Row>
+            <div class="more" v-if="books_count / book_pageSize  > books_current" @click="more('book')">查看更多...</div>
+          </div>
+
+          <div class="articles-list block-shadow">
+            <h2 class="dot-line-title">文章</h2>          
+            <div class="empty" v-if="!search_books.length">没有搜索到相关文章信息</div>     
+            <articles-list :articles="search_articles" v-if="search_articles.length"></articles-list>
+            <div class="more" v-if="articles_count / article_pageSize  > articles_current" @click="more('article')">查看更多...</div>
+          </div>
+        </div>
       </div>
     </div>
   </lib-main>
@@ -32,62 +44,66 @@
     data() {
       return {
         nav_index: 6,
-        search_books: [],          //图书数据
-        search_articles: [],       //文章数据
         tab_index: 0,
-        book_pageSize: 24,
-        article_pageSize: 10,
-        articles_current: 1,
+        search_books: [],          //图书数据
+        book_pageSize: 16,
         books_current: 1,
         books_count: 0,
-        articles_count: 0
+        search_articles: [],       //文章数据
+        article_pageSize: 10,
+        articles_current: 1,
+        articles_count: 0,
+        search_content: '',       //搜索的关键字
+        more_book_state: true,    //加载更多的按钮是否可以点击
+        more_article_state: true,
       };
     },
     created() {
       // this.articles_init(1, '')
     },
-    mounted(){
-      let search_content = getCookie('search_content')
+    mounted() {
+      this.search_content = getCookie('search_content')
 
-      // this.get_books_data(search_content)
-      // this.get_articles_data(search_content)
+      this.get_books_data()
+      this.get_articles_data()
     },
     methods: {
-      //更新tabs的下标
-      updata_tabs_index(name){
-        switch(name){
-          case 'book': this.tab_index = 0;break;
-          case 'article': 
-            this.tab_index = 1;
-            // this.articles_init(this.hot_articles_current, 'collect');
-            break;
-          default: this.tab_index = 0;break;
-        }
-      },
-      //初始化文章
-      articles_init(current, sort) {
-        this.$http.get(`/api/v0/articles/all?pageSize=${this.pageSize}&easyState=1&sort=${sort}&currPage=${current}`).then((res) => {
-          if(res.status === 200){
-            if(sort === ''){
-              this.new_articles = res.data.articles || []
-              this.articles_count = res.data.count
-            }else if(sort === 'collect'){
-              this.hot_articles = res.data.articles || []
-            }else if(sort === 'recommend'){
-              this.recommend_articles = res.data.articles || []
-            }
-          }
-        }, (res) => {
+      //获取图书信息
+      get_books_data(){
+        this.$http.get(`/api/v0/books/all?pageSize=${this.book_pageSize}&easyState=1&currPage=${this.books_current}&search_content=${this.search_content}`).then(res => {
+          this.search_books = this.search_books.concat(res.data.books)
+          this.books_count = res.data.count
+          this.more_book_state = true
+        }, res => {
           console.log(res)
         })
       },
-      change_book_current(current){
-        // this.new_articles_current = current
-        // this.articles_init(current, '')
+      //获取文章信息
+      get_articles_data(){
+        this.$http.get(`/api/v0/articles/all?pageSize=${this.article_pageSize}&easyState=1&currPage=${this.articles_current}&search_content=${this.search_content}`).then(res => {
+          
+          this.search_articles = this.search_articles.concat(res.data.articles)
+          this.articles_count = res.data.count
+          this.more_article_state = true
+        }, res => {
+          console.log(res)
+        })
       },
-      change_article_current(current){
-        // this.hot_articles_current = current
-        // this.articles_init(current, 'collect')
+      //查看更多
+      more(type){
+        if(!this.more_book_state || !this.more_article_state){            this.$Message.warning('请不要多次点击')
+          return
+        }
+
+        if(type === 'book' && this.more_book_state){
+          this.books_current++
+          this.more_book_state = false
+          this.get_books_data()
+        }else if(type === 'article' && this.more_article_state){
+          this.articles_current++
+          this.more_article_state = false
+          this.get_articles_data()
+        }
       }
     },
     components: {
@@ -107,15 +123,78 @@
     width: 100%;
     max-width: 1263px;
     margin: 0 auto;
-    .art-tabs{
-      .ivu-tabs-tabpane{
-        padding: 0 14px;
+    display: flex;
+    justify-content: space-between;
+    .left {
+      width: 100%;
+      .block-books {
+        width: 100%;
+        padding-top: 14px;
+        .block-book {
+          padding-bottom: 14px;
+          text-align: center;
+          .book-img {
+            width: 115px;
+            height: 154px;
+            display: inline-block;
+            background-color: $mainC;
+            border-radius: 4px;
+          }
+          .detail-block{
+            width: 115px;
+            margin: 0 auto;
+            .name, .author, .translators{
+              text-align: left;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+      .more{
+        width: 120px;
+        margin: 20px auto 0 auto;
+        text-align: center;
+        line-height: 32px;
+        border-radius: 4px;
+        background-color: $shallowC;
+        color: #fff;
+        cursor: pointer;
+        &:hover{
+         box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.25) 
+        }
       }
     }
-    .page-warpper{
-      display: flex;
-      justify-content: flex-end;
+    .right{
+      width: 23%
     }
+    .empty{
+      font-size: 14px;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  }
+}
+@media screen and (max-width: 768px) {
+  #index {
+    .container {
+      .row {
+        display: block;
+        .left,
+        .right {
+          width: 100%;
+        }
+        .left {
+          .iconWrapper {
+            top: -2px;
+          }
+        }
+      }
+    }
+  }
+  .block-shadow {
+    box-shadow: none;
+    padding: 0 14px;
   }
 }
 </style>
