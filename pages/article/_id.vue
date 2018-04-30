@@ -11,8 +11,40 @@
           </div>
           <div class="markdown-body block-shadow" v-html="article_data.content"></div>
 
-          <div class="block-shadow">
+          <div class="block-shadow article-comment">
+            <h3 class="dot-line-title">评论</h3>
+            <div class="content">　　
+              <ul class="comment-wrapper">
+                <li class="comment-item" v-for="(item, index) in commentData" :key="item._id">
+                  <img class="avater" :src="item.user.avater" alt="">
+                  <div class="about">
+                    <span class="name">{{ item.user.name }}&nbsp;-&nbsp;</span>
+                    <span class="time">{{ item.meta.createdAt.slice(0, 10) }}</span>
+                    <p class="content">{{ item.content }}</p>
+                    <a v-if="!item.reply.length" @click="getReply(index)" href="javascript:void(0)" class="watch-reply">查看回复</a>
+                    <!-- <span>{{item.reply}}</span> -->
+                    <a @click="addReply(index)" href="javascript:void(0)" class="add-reply">回复</a>
 
+                    <ul class="reply-wrapper">
+                      <li class="reply-item" v-for="(replyItem, replyIndex) in item.reply" :key="replyIndex">
+                        <img class="avater" :src="replyItem.user.avater" alt="">
+                        <div class="about">
+                          <span class="name">{{ replyItem.user.name }}&nbsp;-&nbsp;</span>
+                          <span class="time">{{ replyItem.meta.createdAt.slice(0, 10) }}</span>
+                          <p class="content">{{ replyItem.content }}</p>
+                        </div>
+                      </li> 
+                    </ul> 
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="myComment">
+              <img class="avater" :src="$store.state.userMess.avater" alt="">
+              <i-Input v-model="myComment" type="textarea" :rows="4" placeholder="文明社会，理性评论"></i-Input>
+            </div>
+            <Button type="primary" class="addComment" @click="addComment(0)">发表评论</Button>
           </div>
         </div>
 
@@ -50,6 +82,9 @@
         article_data: {},             //文章数据
         recomend_state: 0,            //文章的收藏和推荐状态
         collect_state: 0,
+        myComment: '',                //我的评论
+        commentData: [],              //评论数据
+        commentType: 1,               //评论的类别 0->图书 1->文章
       }
     },
     methods: {
@@ -124,6 +159,125 @@
           console.log(res)
         })
       },
+      //新增评论
+      addComment(pid, content, index){
+        let _content = content ? content : this.myComment
+        
+        if(this.$store.state.userMess._id){
+          this.$Message.warning('请先登录')
+          return
+        }
+        
+        if(_content.length < 8){
+          this.$Message.warning('评论不得少于8个字')
+          return
+        }
+
+        let params = {
+          uid: this.$store.state.userMess._id,
+          content: _content,
+          pid: pid,
+          aid: this.article_id,
+          type: 0
+        }
+
+        this.$http.post('/api/v0/comment/addComment', params).then( res => {
+          if(res.data.ok === 0){
+            let data = res.data.data
+
+            if(pid === 0){
+              this.$Message.success('发表成功')
+              data.reply = []
+              this.commentData.unshift(data)
+            }
+            else{
+              this.$Message.success('回复成功')
+              this.commentData[index].content = this.commentData[index].content + ' '
+              this.commentData[index].reply.unshift(data)
+            }
+            
+          }else{
+            this.$Message.warning('发表失败，请联系后台人员处理')
+          }
+        }, res => {
+          console.log(res)
+        })
+      },
+      //获取评论
+      getComment(pid, aid){
+        this.$http.get(`/api/v0/comment/allComments?type=${this.commentType}&pid=${pid}&aid=${aid}`).then( res => {
+          if(res.data.ok === 0){
+            this.commentData = res.data.comments
+            if(pid === 0){
+              this.commentData.forEach( val => {
+                val.reply = []
+              })
+            }
+          }
+        }, res => {
+          console.log(res)
+        })
+      },
+      //添加回复
+      addReply(index){
+        let pid = this.commentData[index]._id
+        let content = ''
+
+        this.$Modal.confirm({
+          okText: '提交评论',
+          render: (h) => {
+            return h('ul', {
+              style: {
+                width: '100%'
+              }
+            }, [
+              h(
+                "li",
+                {
+                  style: {
+                    display: "flex",
+                    marginBottom: "14px",
+                    alignItems: "center"
+                  }
+                },
+                [
+                  h("Input", {
+                    props: {
+                      type: 'textarea',
+                      rows: 5,
+                      placeholder: '文明社会，理性评论'
+                    },
+                    on: {
+                      input: val => {
+                        content = val;
+                      }
+                    }
+                  })
+                ]
+              )
+            ])
+          },
+          onOk: () => {
+            this.addComment(pid, content, index)
+          }
+        })   
+      },
+      //获取当前评论的
+      getReply(index){
+        let aid = this.article_id
+        let pid = this.commentData[index]._id
+        
+        this.$http.get(`/api/v0/comment/allComments?type=${this.commentType}&pid=${pid}&aid=${aid}`).then( res => {
+          if(res.data.ok === 0){
+            if(pid != 0){
+              this.commentData[index].content = this.commentData[index].content + ' '
+              this.commentData[index].reply = res.data.comments
+            }
+          }
+        }, res => {
+          console.log(res)
+        })
+      }
     },
     created() {
       this.get_article_id()
@@ -131,6 +285,7 @@
     mounted() {
       this.get_userActionMess()
       this.article_action('read', 0)
+      this.getComment(0, this.article_id)
     },
     components: {
       libMain
@@ -162,6 +317,70 @@
       }
       .read-num {
         margin-left: 10px;
+      }
+    }
+    .article-comment{
+      width: 100%;
+      padding-bottom: 55px;
+      .content{
+        .comment-item, .reply-item{
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 14px;
+          .avater{
+            width: 35px;
+            height: 35px;
+            display: inline-flex;
+            margin-right: 20px;
+            background-color: #eee;
+            border-radius: 50%;
+          }
+          .about{
+            flex: 1;
+            .name{
+              font-size: 14px;
+              color: $mainC;
+            }
+            .content{
+              font-size: 14px;
+              color: #657180;
+            }
+            .watch-reply{
+              display: inline-block;
+              margin: 5px 10px 0 0;
+            }
+            .add-reply{
+              display: inline-block;
+              margin-top: 5px;
+            }
+          }
+        }
+        .reply-item{
+          margin-top: 14px;
+          .avater{
+            width: 30px;
+            height: 30px;
+
+          }
+        }
+      }
+      .myComment{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        .avater{
+          width: 50px;
+          height: 50px;
+          display: inline-flex;
+          margin-right: 20px;
+          background-color: #eee;
+          border-radius: 4px;
+        }
+      }
+      .addComment{
+        float: right;
+        margin-top: 10px;
       }
     }
   }

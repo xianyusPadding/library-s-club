@@ -256,6 +256,7 @@
                   setCookie('phone', res.data.phone)
                   setCookie('password', res.data.password)
                   setCookie('userId', res.data._id)
+
                   _this.$emit('updataloginstate', 1)
                 }
               })

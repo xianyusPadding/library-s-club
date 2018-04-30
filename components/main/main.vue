@@ -65,13 +65,15 @@
 
         if(phone && password){
           this.$http.get(`/api/v0/user/loginState?phone=${phone}&password=${password}`).then((res) => {
-            if(res.data.loginState === 1){
+            if(res.data.data.code === 1){
               this.login_state = 1
+              this.$store.state.userMess = res.data.data.user
             }
           }, (res) => {
             console.log(res)
           })
         }
+        
       },
       updata_login_state(loginState){
         this.login_state = loginState
