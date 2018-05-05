@@ -34,6 +34,7 @@ module.exports = {
     '@nuxtjs/proxy'
   ],
   proxy: [
-    ['/api/v0', { target: 'http://localhost:4455' }]
+    ['/api/v0', { target: 'http://localhost:4455' }],
+    ['/images', { target: 'http://localhost:4455' }]
   ]
 }

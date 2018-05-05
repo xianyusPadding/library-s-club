@@ -12,7 +12,7 @@
             </div>
 
             <div class="user-actions">
-              <Button type="primary" class="action-item">修改个人资料</Button>
+              <Button type="primary" class="action-item" @click="update_user_mess">修改个人资料</Button>
               <Button type="primary" class="action-item" @click="update_editor_state(1)">写作</Button>
             </div>
           </div>
@@ -90,6 +90,230 @@
       }
     },
     methods: {
+      //修改个人资料
+      update_user_mess(){
+        let userInfo = {}
+        let _this = this
+        this.$Modal.confirm({
+          render: h => {
+            return h("ul", [
+              h(
+                "li",
+                {
+                  style: {
+                    display: "flex",
+                    marginBottom: "14px",
+                    alignItems: "center"
+                  }
+                },
+                [
+                  h(
+                    "span",
+                    {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                    "手机号码："
+                  ),
+                  h("Input", {
+                    props: {
+                      value: this.$store.state.userMess.phone
+                    },
+                    style: {
+                      flex: "1"
+                    },
+                    on: {
+                      input: val => {
+                        userInfo.phone = val;
+                      }
+                    }
+                  })
+                ]
+              ),
+              h(
+                "li",
+                {
+                  style: {
+                    display: "flex",
+                    marginBottom: "14px",
+                    alignItems: "center"
+                  }
+                },
+                [
+                  h(
+                    "span",
+                    {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                    "密码："
+                  ),
+                  h("Input", {
+                    props: {
+                      type: 'password'
+                    },
+                    style: {
+                      flex: "1"
+                    },
+                    on: {
+                      input: val => {
+                        userInfo.pass = val;
+                      }
+                    }
+                  })
+                ]
+              ),
+              h(
+                "li",
+                {
+                  style: {
+                    display: "flex",
+                    marginBottom: "14px",
+                    alignItems: "center"
+                  }
+                },
+                [
+                  h(
+                    "span",
+                    {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                    "确认密码："
+                  ),
+                  h("Input", {
+                    props: {
+                      type: 'password'
+                    },
+                    style: {
+                      flex: "1"
+                    },
+                    on: {
+                      input: val => {
+                        userInfo._pass = val;
+                      }
+                    }
+                  })
+                ]
+              ),
+              h(
+                "li",
+                {
+                  style: {
+                    display: "flex",
+                    marginBottom: "14px",
+                    alignItems: "center"
+                  }
+                },
+                [
+                  h(
+                    "span",
+                    {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                    "个人简介："
+                  ),
+                  h("Input", {
+                    props: {
+                      value: this.$store.state.userMess.introduction ? this.$store.state.userMess.introduction : '这个人很懒，什么都没留下'
+                    },
+                    style: {
+                      flex: "1"
+                    },
+                    on: {
+                      input: val => {
+                        userInfo.introduction = val;
+                      }
+                    }
+                  })
+                ]
+              ),
+              h(
+                "li",
+                {
+                  style: {
+                    display: "flex",
+                    marginBottom: "14px",
+                    alignItems: "center"
+                  }
+                },
+                [
+                  h(
+                    "span",
+                    {
+                      style: {
+                        flex: "0 0 60px"
+                      }
+                    },
+                    "图片上传："
+                  ),
+                  h(
+                    "Upload",
+                    {
+                      props: {
+                        type: "drag",
+                        action: "/api/v0/file/upload",
+                        'on-success': function (res) {
+                          console.log(res)
+                          if (res.ok === 0) {
+                            userInfo.avater = `/images/${res.fileName}`
+                          }
+                        }
+                      },
+                      style: {
+                        flex: 1
+                      }
+                    },
+                    [
+                      h("div", [
+                        h("Icon", {
+                          props: {
+                            type: "ios-cloud-upload",
+                            size: "52"
+                          },
+                          style: {
+                            color: "#3399ff"
+                          }
+                        })
+                      ])
+                    ]
+                  )
+                ]
+              ),
+            ])
+          },
+          onOk: () => {
+            _this.userInfo.avater = userInfo.avater
+            userInfo.userId = _this.$store.state.userMess
+
+            if(userInfo.phone){
+              userInfo.phone.length != 11 ? _this.$Message.warning('手机号码格式不正确！') : ''
+              return
+            } else if(userInfo.pass != userInfo._pass){
+              _this.$Message.warning('两次输入的密码不相同！')
+              return
+            } 
+
+            if(userInfo.pass){
+              userInfo.password = userInfo.pass
+            }
+            _this.$http.post('/api/v0/user/updateMess', userInfo).then( res => {
+              if(res.data.userName){
+                _this.$Message.success('修改资料成功~')
+              } else {
+                _this.$Message.warning('修改资料出错，请联系后台客服人员！')
+              }
+            }, res => {
+              console.log(res)
+            })
+          }
+        })    
+      },
       //更改编辑的状态
       update_editor_state(state){
         state ? this.writeEditorState = true : this.writeEditorState = false
