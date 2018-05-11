@@ -491,7 +491,7 @@
       addComment(pid, content, index){
         let _content = content ? content : this.myComment
         
-        if(this.$store.state.userMess._id){
+        if(!this.$store.state.userMess._id){
           this.$Message.warning('请先登录')
           return
         }
